@@ -4,5 +4,5 @@ after git clone do the following to start the application:
 
 
 1. npm install
-2. set up the .env file correctly
+2. set up the .env file correctly (it is uploaded in group)
 3. npm run dev
