@@ -1,78 +1,89 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true
+const userSchema = new mongoose.Schema(
+  {
+    avatar_url: {
+      type: String,
+      default: null,
     },
-    email:{
-        type: String,
-        required:true,
-        unique:true
+    bio: {
+      type: String,
+      default: null,
     },
-    token:{
-        type: String,
-        default: null
-    },  
-    password:{
-        type: String,
-        required: true
+    display_name: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    dob:{
-        type: Date,
-        required: true
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    gender:{
-        type: String,
-        enum: ["male", "female", "other"],
-        required: true,
+    token: {
+      type: String,
+      default: null,
     },
-    Profile:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Profile",
-        default: null
+    password: {
+      type: String,
+      required: true,
     },
-    suspendedUntil:{
-        type: Date,
-        default: null
+    dob: {
+      type: Date,
+      required: true,
     },
-    mutedUntil:{
-        type: Date,
-        default: null
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      required: true,
     },
-    emailVerified:{
-        type: Boolean,
-        default: false
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Profile",
+      default: null,
     },
-    phone:{
-        type: String,
-        default: null
+    suspended_until: {
+      type: Date,
+      default: null,
     },
-    phoneVerified:{
-        type: Boolean,
-        default: false
+    muted_until: {
+      type: Date,
+      default: null,
     },
-    resetPasswordToken:{
-        type: String,
+    email_verified: {
+      type: Boolean,
+      default: false,
     },
-    resetPasswordTokenExpiresAt:{
-        type: Date,
+    phone: {
+      type: String,
+      default: null,
     },
-    verificationToken: {
-        type: String,
+    phone_verified: {
+      type: Boolean,
+      default: false,
     },
-    verificationTokenExpiresAt:{
-        type: Date,
+    reset_pw_token: {
+      type: String,
     },
-    lastLogin: {
-        type: Date,
-        default: Date.now,
+    reset_pw_token_expires_at: {
+      type: Date,
     },
-    follower: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-    following: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-    dm: [{type: mongoose.Schema.Types.ObjectId, ref: "Dm"}],
-},{timestamps:true});
+    verification_token: {
+      type: String,
+    },
+    verification_token_expires_at: {
+      type: Date,
+    },
+    last_log_in: {
+      type: Date,
+      default: Date.now,
+    },
+    follower: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    dm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dm" }],
+  },
+  { timestamps: true }
+);
 
 const User = mongoose.model("User", userSchema);
 
