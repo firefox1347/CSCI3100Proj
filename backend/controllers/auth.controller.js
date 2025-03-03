@@ -1,6 +1,7 @@
 import User from"../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import passwordCheck from "../utils/passwordCheck.js";
 import genderCheck from "../utils/genderCheck.js"
 import { protectRoute } from "../middleware/auth.middleware.js";
@@ -12,17 +13,17 @@ export const signup = async (req,res,next) =>{
         //validations
         const {password, dob, gender, email, username} = req.body;
         if(!password || !dob || !gender || !email || !username){
-            return res.status(400).json({message: "All information should be filled in"});
+            return res.status(400).json({success: false,message: "All information should be filled in"});
         }
         if(!genderCheck(gender)){
-            return res.status(400).json({message: "gender is out of enum value"});
+            return res.status(400).json({success: false,message: "gender is out of enum value"});
         }
         const existingEmail = await User.findOne({email});
         const existingusername = await User.findOne({username});
-        if(existingEmail) return res.status(400).json({message: "Email already exists"});
-        if(existingusername) return res.status(400).json({message: "username already exists"});
+        if(existingEmail) return res.status(400).json({success: false,message: "Email already exists"});
+        if(existingusername) return res.status(400).json({success: false,message: "username already exists"});
         if(!passwordCheck(password)){
-            return res.status(400).json({message: "Not all criteria are met for password"});
+            return res.status(400).json({success: false,message: "Not all criteria are met for password"});
         }
 
         //hash password
@@ -58,9 +59,9 @@ export const signup = async (req,res,next) =>{
             secure: process.env.NODE_ENV === "production",
         });
         
-        res.status(201).json({message: "Register Sucessfully"});
+        res.status(201).json({success: true ,message: "Register Sucessfully"});
         
-        //sending verification email, todo: to be implemented
+        //sending verification email, todo: to be implemented @ppc
         // try {
         //     await sendVerificationEmail(user.email, user.name);
         // } catch (emailError) {
@@ -70,14 +71,14 @@ export const signup = async (req,res,next) =>{
 
     } catch (error) {
         console.log(error); // for debugging
-        res.status(500).send({message: "Internal Server Error"}); // for production
+        res.status(500).send({success: false, message: "Internal Server Error"}); // for production
     }
 }
 export const login = async (req,res,next) =>{
     try {
         const {username_or_email, password} = req.body;
         if(!password || !username_or_email){
-            return res.status(400).json({message: "Invalid credentials"});
+            return res.status(400).json({success: false,message: "Invalid credentials"});
         }
         let user = await User.findOne({username: username_or_email});
         if(!user){
@@ -85,12 +86,12 @@ export const login = async (req,res,next) =>{
         }
         
         if(!user){
-            return res.status(400).json({message: "Wrong Account or Password"});
+            return res.status(400).json({success: false,message: "Wrong Account or Password"});
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            return res.status(400).json({message: "Wrong Account or Password"});
+            return res.status(400).json({success: false,message: "Wrong Account or Password"});
         }
 
 
@@ -116,11 +117,11 @@ export const login = async (req,res,next) =>{
             secure: process.env.NODE_ENV === "production",
         });
         
-        res.status(201).json({message: "Logged in Sucessfully"});
+        res.status(201).json({success: true,message: "Logged in Sucessfully"});
 
     } catch (error) {
         console.error("Error in login controller: ", error);
-        res.status(500).json({message: "Internal Server error"});
+        res.status(500).json({success: false,message: "Internal Server error"});
     }
 }
 export const logout = async (req,res,next) =>{
@@ -132,8 +133,87 @@ export const checkAuth = async (req,res,next) => {
         res.json(req.user);
     } catch (error) {
         console.error("error in checkAuth", error.message);
-        res.status(500).json({message: "Server Error"});
+        res.status(500).json({success: false,message: "Server Error"});
     }
 }
-  
-//to be implement : forgotPassword, resetPassword, deleteAccount
+export const forgotPassword = async (req,res,next) =>{
+    try {
+        const {email} = req.body;
+        const user = await User.findOne({email});
+
+        const reset_pw_token = crypto.randomBytes(20).toString("hex");
+        const reset_pw_token_expires_at = Date.now() + 26*60*60*1000;
+        user.reset_pw_token = reset_pw_token;
+        user.reset_pw_token_expires_at = reset_pw_token_expires_at;
+        await user.save()
+        {   //debugging block(to get token without email sending service)
+            console.log(reset_pw_token);
+            console.log(reset_pw_token_expires_at);
+        }
+
+
+        res.status(200).json({success: true,message: "Password reset email is sent to your email"});
+        try {
+            //todo: send email @ppc
+        } catch (errorEmail) {
+            console.error("Error in forgotPassword sending email", error.message);
+            res.status(500).json({success: false,message: "Internal server error"});
+        }
+        
+    } catch (error) {
+        console.error("error in forgotPassword", error.message);
+        res.status(500).json({success:false, message: "Oops! something went wrong"});
+    }
+}
+
+export const deleteAccount = async (req,res,next) => {
+    try {
+        const user = req.user;
+        const userId = user._id;
+        {
+            console.log(user._id);
+        }
+        await User.deleteOne({_id: userId});
+        res.clearCookie("bbtoken");
+        res.status(200).json({success: true,message: "Account deleted successfully"});
+            
+    } catch (error) {
+        console.error("Error in deleteAccount", error.message);
+        res.status(400).json({success: false,message: "Oops something went wrong"});
+    }
+}
+
+export const resetPassword  = async(req,res,next) =>{
+    try {
+        const token = req.params.token;
+        const {password, confirmPassword} = req.body;
+        if(!password || !confirmPassword){
+            return res.status(400).json({success:false, message: "Please enter all fields"});
+        }
+        if(password !== confirmPassword){
+            return res.status(400).json({success:false, message: "Passwords do not match"});
+        }
+        if(!passwordCheck(password)){
+            return res.status(400).json({success:false, message: "Not all criteria are met for password"});
+        }
+
+        const user = await User.findOne({reset_pw_token: token, reset_pw_token_expires_at: {$gt: Date.now()}});
+        
+        //console.log(user);
+
+        if(!user){
+            return res.status(400).json({success:false, message: "Invalid or expired token"});
+        }
+
+        const salt = await bcrypt.genSalt(12);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        user.password = hashedPassword;
+        user.reset_pw_token = null;
+        user.reset_pw_token_expires_at = null;
+        await user.save();
+        res.status(200).json({success: true, message: "Password reset successfully"});
+    } catch (error) {
+        console.error("Error in resetPassword");
+        res.status(500).json({success: false,message:"Oops! something went wrong"});
+    }
+}
