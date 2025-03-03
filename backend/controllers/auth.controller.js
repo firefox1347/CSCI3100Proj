@@ -10,17 +10,17 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 export const signup = async (req,res,next) =>{
     try {
         //validations
-        const {password, dob, gender, email, display_name} = req.body;
-        if(!password || !dob || !gender || !email || !display_name){
+        const {password, dob, gender, email, username} = req.body;
+        if(!password || !dob || !gender || !email || !username){
             return res.status(400).json({message: "All information should be filled in"});
         }
         if(!genderCheck(gender)){
             return res.status(400).json({message: "gender is out of enum value"});
         }
         const existingEmail = await User.findOne({email});
-        const existingdisplay_name = await User.findOne({display_name});
+        const existingusername = await User.findOne({username});
         if(existingEmail) return res.status(400).json({message: "Email already exists"});
-        if(existingdisplay_name) return res.status(400).json({message: "display_name already exists"});
+        if(existingusername) return res.status(400).json({message: "username already exists"});
         if(!passwordCheck(password)){
             return res.status(400).json({message: "Not all criteria are met for password"});
         }
@@ -37,7 +37,7 @@ export const signup = async (req,res,next) =>{
             dob, 
             gender, 
             email, 
-            display_name,
+            username,
             verification_token,
             verification_token_expires_at: Date.now()+ 60*60*1000,
         });
@@ -75,13 +75,13 @@ export const signup = async (req,res,next) =>{
 }
 export const login = async (req,res,next) =>{
     try {
-        const {display_name_or_email, password} = req.body;
-        if(!password || !display_name_or_email){
+        const {username_or_email, password} = req.body;
+        if(!password || !username_or_email){
             return res.status(400).json({message: "Invalid credentials"});
         }
-        let user = await User.findOne({display_name: display_name_or_email});
+        let user = await User.findOne({username: username_or_email});
         if(!user){
-            user = await User.findOne({email: display_name_or_email});
+            user = await User.findOne({email: username_or_email});
         }
         
         if(!user){
@@ -99,7 +99,7 @@ export const login = async (req,res,next) =>{
         await user.save();
 
         // //debug
-        // console.log(display_name);
+        // console.log(username);
         // console.log(email);
         // res.status(200).json({message: "debug check"});
 
