@@ -10,17 +10,17 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 export const signup = async (req,res,next) =>{
     try {
         //validations
-        const {password, dob, gender, email, username} = req.body;
-        if(!password || !dob || !gender || !email || !username){
+        const {password, dob, gender, email, display_name} = req.body;
+        if(!password || !dob || !gender || !email || !display_name){
             return res.status(400).json({message: "All information should be filled in"});
         }
         if(!genderCheck(gender)){
             return res.status(400).json({message: "gender is out of enum value"});
         }
         const existingEmail = await User.findOne({email});
-        const existingUsername = await User.findOne({username});
+        const existingdisplay_name = await User.findOne({display_name});
         if(existingEmail) return res.status(400).json({message: "Email already exists"});
-        if(existingUsername) return res.status(400).json({message: "Username already exists"});
+        if(existingdisplay_name) return res.status(400).json({message: "display_name already exists"});
         if(!passwordCheck(password)){
             return res.status(400).json({message: "Not all criteria are met for password"});
         }
@@ -28,7 +28,7 @@ export const signup = async (req,res,next) =>{
         //hash password
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const verificationToken = Math.floor(100000 + Math.random()*900000).toString();
+        const verification_token = Math.floor(100000 + Math.random()*900000).toString();
 
 
         //generate user and store to db
@@ -37,9 +37,9 @@ export const signup = async (req,res,next) =>{
             dob, 
             gender, 
             email, 
-            username,
-            verificationToken,
-            verificationTokenExpiresAt: Date.now()+ 60*60*1000,
+            display_name,
+            verification_token,
+            verification_token_expires_at: Date.now()+ 60*60*1000,
         });
         await newUser.save();
 
@@ -48,7 +48,7 @@ export const signup = async (req,res,next) =>{
         
         
         //for debugging
-        //res.status(200).json({message: "ok", token: token, password: hashedPassword, verificationToken:verificationToken});
+        //res.status(200).json({message: "ok", token: token, password: hashedPassword, verification_token:verification_token});
         
         
         res.cookie("bbtoken", token, {
@@ -75,13 +75,13 @@ export const signup = async (req,res,next) =>{
 }
 export const login = async (req,res,next) =>{
     try {
-        const {usernameOrEmail, password} = req.body;
-        if(!password || !usernameOrEmail){
+        const {display_name_or_email, password} = req.body;
+        if(!password || !display_name_or_email){
             return res.status(400).json({message: "Invalid credentials"});
         }
-        let user = await User.findOne({username: usernameOrEmail});
+        let user = await User.findOne({display_name: display_name_or_email});
         if(!user){
-            user = await User.findOne({email: usernameOrEmail});
+            user = await User.findOne({email: display_name_or_email});
         }
         
         if(!user){
@@ -95,11 +95,11 @@ export const login = async (req,res,next) =>{
 
 
         //update last login
-        user.lastLogin = new Date();
+        user.last_log_in = new Date();
         await user.save();
 
         // //debug
-        // console.log(username);
+        // console.log(display_name);
         // console.log(email);
         // res.status(200).json({message: "debug check"});
 
@@ -135,4 +135,5 @@ export const checkAuth = async (req,res,next) => {
         res.status(500).json({message: "Server Error"});
     }
 }
+  
 //to be implement : forgotPassword, resetPassword, deleteAccount
