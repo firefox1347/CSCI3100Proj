@@ -6,10 +6,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    bio: {
-      type: String,
-      default: null,
-    },
     display_name: {
       type: String,
     },
@@ -29,15 +25,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
-    },
-    dob: {
-      type: Date,
-      required: true,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female", "other"],
       required: true,
     },
     profile: {
@@ -84,6 +71,8 @@ const userSchema = new mongoose.Schema(
     follower: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     dm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dm" }],
+    collection: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}],
+    likePost: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
   },
   { timestamps: true }
 );
