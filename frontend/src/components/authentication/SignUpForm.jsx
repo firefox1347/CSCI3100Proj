@@ -8,7 +8,7 @@ import {Loader} from "lucide-react";
 const SignUpForm = () => {
     const [gender, setGender] = useState("");
 	const [email, setEmail] = useState("");
-	const [display_name , setDisplayName] = useState("");
+	const [username , setUsername] = useState("");
 	const [password, setPassword] = useState("");
     const [dob, setDob] = useState("");
 
@@ -27,7 +27,7 @@ const SignUpForm = () => {
     })
     const handleSubmit = (e) => {
         e.preventDefault();
-        signupMutation({display_name , email, password, dob, gender});
+        signupMutation({username , email, password, dob, gender});
     }
 
 
@@ -36,9 +36,9 @@ const SignUpForm = () => {
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
 				type='text'
-				placeholder='Display name'
-				value={display_name }
-				onChange={(e) => setDisplayName(e.target.value)}
+				placeholder='Username'
+				value={ username }
+				onChange={(e) => setUsername(e.target.value)}
 				className='input input-bordered w-full'
 				required
 			/>

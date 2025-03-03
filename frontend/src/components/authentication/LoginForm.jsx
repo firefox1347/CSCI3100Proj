@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { Loader } from "lucide-react";
 
 const LoginForm = () => {
-    const [display_name_or_email, setDisplayName] = useState("");
+    const [username_or_email, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const QueryClient = useQueryClient();
 
@@ -22,7 +22,7 @@ const LoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        loginMutation({display_name_or_email, password});
+        loginMutation({username_or_email, password});
     }
 
   return (
@@ -30,8 +30,8 @@ const LoginForm = () => {
 			<input
 				type='text'
 				placeholder='Username'
-				value={display_name_or_email}
-				onChange={(e) => setDisplayName(e.target.value)}
+				value={username_or_email}
+				onChange={(e) => setUsername(e.target.value)}
 				className='input input-bordered w-full'
 				required
 			/>
