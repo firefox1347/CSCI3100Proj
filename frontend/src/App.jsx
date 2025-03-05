@@ -6,6 +6,8 @@ import HomePage from "./pages/HomePage"
 import toast, { Toaster } from "react-hot-toast"
 import { axiosInstance } from "./lib/axios"
 import { useQuery } from "@tanstack/react-query"
+import ProfilePage from "./pages/ProfilePage"
+import { useLocation } from 'react-router-dom';
 
 function App() {
 
@@ -14,7 +16,7 @@ function App() {
 		queryFn: async () => {
 			try {
 				const res = await axiosInstance.get("/auth/me");
-        console.log(res.data);
+        		//console.log(res.data);
 				return res.data;
 			} catch (err) {
 				if (err.response && err.response.status === 401) {
@@ -25,7 +27,12 @@ function App() {
 		},
 	});
 
+	const location = useLocation();
+  	console.log('Current Location:', location.pathname);
+
   if (isLoading) return null;
+  //for debug
+  console.log('Auth User:', authUser);
 
   return <Layout>
 
@@ -33,6 +40,7 @@ function App() {
         <Route path='/' element={authUser ? <HomePage /> : <Navigate to={"/login"} />} />
 		<Route path='/signup' element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />} />
 		<Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
+		<Route path='/profile' element={authUser ? <ProfilePage /> : <Navigate to={"/login"} />} />
     </Routes>
     <Toaster />
   </Layout>

@@ -6,21 +6,21 @@ import { Link } from 'react-router-dom'
 
 const Navbar = () => {
 
-  const { data: authUser} = useQuery({ queryKey: ["authUser"] , staleTime: 1000});
+  const { data: authUser} = useQuery({ queryKey: ["authUser"] , staleTime: 1000,	
+  });
 	const queryClient = useQueryClient();
 
   const { mutate: logout } = useMutation({
 		mutationFn: () => {
       axiosInstance.post("/auth/logout")},
 		onSuccess: async () => {
-      console.log("dllm");
 			await queryClient.invalidateQueries({ queryKey: ["authUser"] });
       await queryClient.refetchQueries({ queryKey: ["authUser"] });
 		},
 	});
 
   return (
-    <div className='flex items-center gap-2 md:gap-6'>
+    <div className='flex gap-2 md:gap-6 justify-end'>
 						{authUser ? (
 							<>
 								<button
