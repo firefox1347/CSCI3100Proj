@@ -1,9 +1,15 @@
 import express from "express";
-import { checkAuth, deleteAccount, forgotPassword, login, logout, resetPassword, signup } from "../controllers/auth.controller.js";
+import {
+  checkAuth,
+  deleteAccount,
+  forgotPassword,
+  login,
+  logout,
+  resetPassword,
+  signup,
+} from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 const router = express.Router();
-
-
 
 router.post("/signup", signup);
 router.post("/login", login);
