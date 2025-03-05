@@ -7,7 +7,7 @@ import ProfileTabs from "../components/Profile/ProfileTabs";
 import { ProfilePosts } from "../components/Profile/profilePosts";
 
 const ProfilePage = () => {
-  // const { username } = useParams();
+  	// const { username } = useParams();
 	// const queryClient = useQueryClient();
 
 	// const { data: authUser, isLoading } = useQuery({
