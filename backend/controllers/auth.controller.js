@@ -61,9 +61,9 @@ export const signup = async (req,res,next) =>{
         
         res.status(201).json({success: true ,message: "Register Sucessfully"});
         
-        //sending verification email, todo: to be implemented @ppc
+        //sending verification email( create the function in a file in lib or utils ), todo: to be implemented @ppc
         // try {
-        //     await sendVerificationEmail(user.email, user.name);
+        //     await sendVerifyEmail(user.email, user.name);
         // } catch (emailError) {
         //     console.error("Error sending welcome Email",emailError);
         // }
@@ -154,7 +154,7 @@ export const forgotPassword = async (req,res,next) =>{
 
         res.status(200).json({success: true,message: "Password reset email is sent to your email"});
         try {
-            //todo: send email @ppc
+            //todo: send forgot password email @ppc 
         } catch (errorEmail) {
             console.error("Error in forgotPassword sending email", error.message);
             res.status(500).json({success: false,message: "Internal server error"});
@@ -215,5 +215,25 @@ export const resetPassword  = async(req,res,next) =>{
     } catch (error) {
         console.error("Error in resetPassword");
         res.status(500).json({success: false,message:"Oops! something went wrong"});
+    }
+}
+
+export const sendVerificationEmail = async (req,res,next) => {
+    try {
+        const user = req.user;
+        const userId = user._id;
+        {
+            console.log(user._id);
+        }
+
+        //sending verification email ( create the function in a file in lib or utils ), todo: to be implemented @ppc
+        // try {
+        //     await sendVerifyEmail(user.email, user.name);
+        // } catch (emailError) {
+        //     console.error("Error sending welcome Email",emailError);
+        // }
+    } catch (error) {
+        console.error("Error in deleteAccount", error.message);
+        res.status(400).json({success: false,message: "Oops something went wrong"});
     }
 }
