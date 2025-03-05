@@ -5,6 +5,7 @@ import crypto from "crypto";
 import passwordCheck from "../utils/passwordCheck.js";
 import genderCheck from "../utils/genderCheck.js"
 import { protectRoute } from "../middleware/auth.middleware.js";
+import emailSender from '../utils/emailSender.js';
 
 
 
@@ -62,12 +63,11 @@ export const signup = async (req,res,next) =>{
         res.status(201).json({success: true ,message: "Register Sucessfully"});
         
         //sending verification email( create the function in a file in lib or utils ), todo: to be implemented @ppc
-        // try {
-        //     await sendVerifyEmail(user.email, user.name);
-        // } catch (emailError) {
-        //     console.error("Error sending welcome Email",emailError);
-        // }
-
+        try {
+            await sendEmail(newUser.email, newUser.name, token, "verify")   //ppc@ff: newUser.email correct?
+        } catch (emailError) {
+            console.error("Error sending welcome Email",emailError);    //ppc@ff: welcome email?
+        }
 
     } catch (error) {
         console.log(error); // for debugging
@@ -154,7 +154,14 @@ export const forgotPassword = async (req,res,next) =>{
 
         res.status(200).json({success: true,message: "Password reset email is sent to your email"});
         try {
+            const URL = process.env.FRONTEND + "/api/v1/auth/" + reset_pw_token
             //todo: send forgot password email @ppc 
+            //ppc@ff: send reset success email not implement yet: sendEmail(user.email, user.name, "", "resetSuccess");
+            try {
+                await sendEmail(user.email, user.name, URL, "forgotPW");
+            } catch (emailError) {
+                console.error("Error sending welcome Email",emailError);    //ppc@ff: welcome email?
+            }
         } catch (errorEmail) {
             console.error("Error in forgotPassword sending email", error.message);
             res.status(500).json({success: false,message: "Internal server error"});
@@ -227,13 +234,14 @@ export const sendVerificationEmail = async (req,res,next) => {
         }
 
         //sending verification email ( create the function in a file in lib or utils ), todo: to be implemented @ppc
-        // try {
-        //     await sendVerifyEmail(user.email, user.name);
-        // } catch (emailError) {
-        //     console.error("Error sending welcome Email",emailError);
-        // }
+        //ppc@ff: not define token yet
+        try {
+            await sendEmail(user.email, user.name, token, "verify")
+        } catch (emailError) {
+            console.error("Error sending welcome Email",emailError);    //ppc@ff: welcome email?
+        }
     } catch (error) {
-        console.error("Error in deleteAccount", error.message);
+        console.error("Error in deleteAccount", error.message); //ppc@ff: for delete account only?
         res.status(400).json({success: false,message: "Oops something went wrong"});
     }
 }
