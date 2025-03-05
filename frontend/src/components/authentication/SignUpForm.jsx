@@ -72,7 +72,7 @@ const SignUpForm = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
             </select>
-            <button type="submit" disabled={isLoading} className="btn btn-info w-full text-white">
+            <button type="submit" disabled={isLoading} className="btn btn-info w-full text-white bg-blue-600">
                 {isLoading ? <Loader className="size-5 animate-spin" /> : "Agree & Join"}
             </button>
     </form>

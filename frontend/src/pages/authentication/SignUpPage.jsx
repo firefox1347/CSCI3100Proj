@@ -6,8 +6,8 @@ const SignUpPage = () => {
   return (
     <div className='min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-            <img className='mx-auto h-36 w-auto' src="" alt="" />
-            <h2 className='mt-6 text-center text-3xl font-black text-gray-900'>
+		<h1 className="mb-20 text-center text-5xl font-black"><span className="text-indigo-700">B</span><span>lue&nbsp;</span><span className='text-indigo-700'>B</span><span>ird</span></h1>
+            <h2 className='mt-6 text-center text-2xl font-black text-gray-900'>
                 Share your life and thoughts!
             </h2>
         </div>
