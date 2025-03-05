@@ -13,7 +13,7 @@ const Navbar = () => {
 		mutationFn: () => {
       axiosInstance.post("/auth/logout")},
 		onSuccess: async () => {
-      console.log("dllm");
+    //   console.log("dllm");
 			await queryClient.invalidateQueries({ queryKey: ["authUser"] });
       await queryClient.refetchQueries({ queryKey: ["authUser"] });
 		},
