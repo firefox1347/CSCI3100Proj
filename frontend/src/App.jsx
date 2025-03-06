@@ -8,6 +8,7 @@ import { axiosInstance } from "./lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import ProfilePage from "./pages/ProfilePage";
 import { useLocation } from "react-router-dom";
+import EditProfile from "./components/Profile/EditProfile";
 
 function App() {
   const { data: authUser, isLoading } = useQuery({
@@ -26,8 +27,10 @@ function App() {
     },
   });
 
+
   const location = useLocation();
   console.log("Current Location:", location.pathname);
+
 
   if (isLoading) return null;
 
@@ -49,6 +52,10 @@ function App() {
         <Route
           path={`/profile/:username`}
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+        />
+		    <Route
+          path={`/profile/:username/edit`}
+          element={authUser ? <EditProfile /> : <Navigate to="/login" />}
         />
       </Routes>
       <Toaster />

@@ -13,7 +13,7 @@ const ProfilePage = () => {
   const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
   });
-  const isSelfProfile = username == authUser.username;
+  const isSelfProfile = username === authUser.username;
 
   const { data: userProfile, isLoading: isUserProfileLoading } = useQuery({
     queryKey: ["userProfile", username],
@@ -44,7 +44,7 @@ const ProfilePage = () => {
   return (
     <>
       <div className="p-4 max-w-4xl w-full mx-auto">
-        {<ProfileHeader profileData={userProfile} />}
+        {<ProfileHeader profileData={userProfile} isSelfProfile={isSelfProfile} />}
         <ProfileTabs />
         <ProfilePosts />
       </div>
