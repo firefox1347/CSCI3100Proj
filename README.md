@@ -4,9 +4,11 @@ after git clone do the following to start the application:
 
 
 1. npm install
-2. set up the .env file correctly (it is uploaded in group)
+2. set up the .env file correctly in the outest folder (it is uploaded in group)
 3. npm run dev
-
+4. cd to frontend
+5. npm install
+6. npm run dev
 
 
 TO do commit, please
