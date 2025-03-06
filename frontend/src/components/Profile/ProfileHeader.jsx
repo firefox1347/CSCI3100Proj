@@ -8,11 +8,11 @@ import EditProfile from "./EditProfile";
 
 const ProfileHeader = (userProfile) => {
  
-    console.log(userProfile.profileData.profile.username);
+    //console.log(userProfile.profileData.profile.username);
     const [editing, setEditing] = useState(false);
     const [editedData, setEditedData] = useState({});
     const queryClient = useQueryClient();
-    const testurl = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMSEhUTExIVFRUXFxgXGBUYGBcXFxoYFRoXFxgXFxcYHSggGholHRgVITEhJSkrLi4uFx8zODMtNygtLisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAKcBLgMBIgACEQEDEQH/xAAXAAEBAQEAAAAAAAAAAAAAAAAAAQIH/8QAJxABAQABAgMIAwEAAAAAAAAAAAERAvAhMUESUWFxgaGxwZHh8dH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A4kZLScwa08EtJVBJklOjMBqxFv8AP2lAWb9UlwZAsSRrAAWFSAs37FXDOAW6epCcP0UFsZkXP8W94JEyuEyDWu5rMWoCpYunSlgLCaTC6aCU0zqkmWrMAeHumkniWAVCzuAEFBua72ezm9nOcdMyYl88WsyFTAFMtMgUysIBU3v8qune/IGYthSUEikgCwk8P7gwdrfmDK2mCAYNVJSgS7810phZPEEuEDIFiLlZANOkwIAZACxqafwzhcgZKpMfsGauTK2AnsmprHkkoBp9f0gC5TK2qCFhYtoJSmAAmopATk1Dr3F38AmDVDPwgKsQyBVvgXyL/gJeZkM9ATJatMghWtMZ6gjRdPcUEgpyAQMAL3JAFkJd/aZUBeXgmmrAW/38MZ4tM0DClvLfiQAkLvqlgNXj/nsiLQAt+ygsiYIs5gmCwlXTIBqiLSagT2JA04AXBqqeAGqL2e9JUAXBIsoFnIqc2ppAmfx/UlOvJMALWaoItpSQDVTBgBZw37IRMgpklS0Gql5JxWgILMAmV34+qEBqb9ksW+HL6SAuEyuYkBMrgJ5AumpklQGu0mEbt39AzSE0mQWpYUnUAwVdQJnfNfX1Zw1AWTcZ81t35lBKuCTgZzgEpYumGqgkoWFAt6kIATuZaZwDVmEvkaosoLd7/CWmQEkJBYDLWruEyCyE5AAdBAWVMgC3wRcrjw5gjUnHyn0zaYBWbhvSzjoBkyUsBckQ1AZWGWfUGoYJq+CAmCcA38gQpCgsiVJFt3yAyZ+iUkA9CCy8Ov8AQSRMdVp4ewGroFqZApF7SQDBVTUC47lz8JlYCYSNFvKAyVcLICRcIuATUalKCVGsJKBE1GSgY+15ralA4JFkQFiyZ80x3rv8AnXuXh8ogKW+CGAa01JqFgM2NYQAl4mDBQML2v6zjgAsNVIAkXBkkAwmFkMdwGVmr/C8+CXfiC4TVw4JSgpLSLQMFq7+kwCaqWLAERqoAupKYyCZWkm974kBFJOiQGsJgKC2M1Zw5FAwQANULfEu/kAS1cYIC6TCUBYmTK3xBIhauASRrH6Zq0DtGd8lvJmA1YlJTAIKALhMgCrdJQZw1Kzku/UFm/dbpu/BOqeYLYtiWpKBpq1FBMrEtauQZlajMq9rfqBnCJFA6EgUCLPtIS+IFIsTPADKkvFKDV7vhLzSVb+wQ1au7kuUkATHIi2AkKajIFW9FNQM2Ks+zwzviBd+zLdiT+gmTTpWxAWxn0WoDVSrb474pgDJAoGrhTTMmTAJv5awJOILCxKdAW436Eu/QnumoEs3+FJep6giyexnJbwAi3mkgCRccDqAkIqyAliNRMAX/S0pnu+AME0mFgI1aAE4pIAJ0yaaAEpLve+IAJaoBgwAAAGFsAGWpqv2AJq38FAEpVAL1IAF4lm/yAGqG/cARZwAEUAXCACNVAEy1yqAP//Z";
+    const testurl = "https://www.polyu.edu.hk/af/-/media/Department/AF/People/acad_staff/Dr-Chinedu-Increase-ONWACHUKWU/increase_.png?bc=ffffff&h=860&w=560&rev=cf8ede1ea62646d5aceef2c7c2e5304f&hash=4365276A5D977B480CC94487B0008529";
     const navigate = useNavigate();
     // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({ 
     //     queryKey: ["connectionStatus", userData._id],
@@ -82,7 +82,12 @@ const ProfileHeader = (userProfile) => {
               src={testurl}
               alt="Rounded avatar"
               className="w-40 h-40 mr-4 rounded-full aspect-square"
-              style={{ aspectRatio: 1, maxWidth: "100%", height: "auto" }}
+              style={{
+                width: '200px',
+                height: '200px', 
+                borderRadius: '50%', 
+                objectFit: 'cover', 
+              }}
             />
           </div>
 
@@ -109,10 +114,10 @@ const ProfileHeader = (userProfile) => {
                 0 Post
               </div>
               <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
-                0 Followers
+                158 Followers
               </div>
               <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
-                0 Following
+                1964 Following
               </div>
             </div>
             <div>
