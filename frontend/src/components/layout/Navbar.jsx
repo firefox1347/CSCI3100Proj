@@ -1,0 +1,72 @@
+import React from 'react'
+import { LogOut } from 'lucide-react'
+import { axiosInstance } from '../../lib/axios'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
+import HomeIcon from '@mui/icons-material/Home';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import PeopleIcon from '@mui/icons-material/People';
+
+const Navbar = () => {
+
+  const { data: authUser} = useQuery({ queryKey: ["authUser"] , staleTime: 1000});
+	const queryClient = useQueryClient();
+
+  const { mutate: logout } = useMutation({
+		mutationFn: () => {
+      axiosInstance.post("/auth/logout")},
+		onSuccess: async () => {
+    //   console.log("dllm");
+			await queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      await queryClient.refetchQueries({ queryKey: ["authUser"] });
+		},
+	});
+
+  return (
+    <div className='bg-gray-800 h-10 flex items-center justify-between'>
+						{authUser ? (
+							<>
+								<div className='flex space-x-4'>
+									<a href="https://space.bilibili.com/4176573" target="_blank" title="Subscribe Akie Meow ><">
+										<img src="../src/components/picture/bulebird_icon.png" alt="Logo" className="h-10 w-auto" />
+									</a>
+								</div>
+								<div className='flex space-x-4 mx auto'>
+									<Link to="/" title="Just go home">
+										<HomeIcon fontSize="large" className="text-white hover:text-blue-500" />
+									</Link>
+									{/* Todo: routing for profile is not done */}
+									<Link to="/friend" title="Don't you have friends?">
+										<PeopleIcon fontSize="large" className="text-white hover:text-blue-500" />
+									</Link>
+									{/* Todo: routing for profile is not done */}
+									<Link to="/profile" title="Check your profile">
+										<AccountBoxIcon fontSize="large" className="text-white hover:text-blue-500" />
+									</Link>
+								</div>
+								<div className='flex space-x-4'>
+									<button
+										className='col-start-10 justify-self-end flex items-center space-x-1 text-sm text-gray-000 hover:text-blue-500'
+										title="Bye~"
+										onClick={() => logout()}
+									>
+										<LogOut size={20} />
+										<span className='hidden md:inline'>Logout</span>
+									</button>
+								</div>
+							</>
+						) : (
+							<>
+								<Link to='/login' className='btn btn-ghost'>
+									Sign In
+								</Link>
+								<Link to='/signup' className='btn btn-primary'>
+									Join now
+								</Link>
+							</>
+						)}
+					</div>
+  )
+}
+
+export default Navbar
