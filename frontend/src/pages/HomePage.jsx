@@ -4,9 +4,11 @@ import FaceIcon from '@mui/icons-material/Face';
 import Groups2Icon from '@mui/icons-material/Groups2';
 import PostCreation from '../components/layout/PostCreation';
 
+import FeedPost from '../components/layout/FeedPost';
+
 const HomePage = () => {
-  // Mock data
-  const { data: authUser } = useQuery({ queryKey: ["authUser"], staleTime: 1000 }); // get user data from backend\
+
+  const { data: authUser } = useQuery({ queryKey: ["authUser"], staleTime: 1000 }); // get user data from backend
 
   console.log(authUser._id);
 
@@ -14,7 +16,14 @@ const HomePage = () => {
 
   const recommendedUsers = []; // Empty array to hide the section
 
-  const posts = []; // Empty array to show "No Posts" state
+  const posts = [
+    {
+      _id: 'post1',
+      img: '/img1.png',
+      username: 'demoUser',
+      avatar: '/img2.png'
+    }
+  ];
 
   return (
     <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
@@ -45,7 +54,12 @@ const HomePage = () => {
         {posts?.map((post) => (
           // Post placeholder
           <div key={post._id} className="mb-4 p-4 bg-white rounded-lg shadow">
-
+          <FeedPost 
+            key={post._id}
+            img={post.img}
+            username={post.username}
+            avatar={post.avatar}
+          />
           </div>
         ))}
 
