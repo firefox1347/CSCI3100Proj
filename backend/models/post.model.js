@@ -6,37 +6,42 @@ import mongoose from "mongoose";
 //at the very bottom there is a bar of share, comment, like and save
 
 const postSchema = new mongoose.Schema({
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  images: [
+    {
+      //not sure what type yet. Just put here first
+      type: String,
     },
-    content: {
-        type: String,
-        required: true
+  ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    images: [{
-        //not sure what type yet. Just put here first
-        type: String,
-    }],
-    likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }],
-    noOfLikes: {
-        type: Number,
-        default: 0
+  ],
+  noOfLikes: {
+    type: Number,
+    default: 0,
+  },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PostComment",
+      //should The user have a list of their comment too?
     },
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "PostComment"
-        //should The user have a list of their comment too?
-    }],
-    noOfComments: {
-        type: Number,
-        default: 0
-    }
-
+  ],
+  noOfComments: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Post = mongoose.model("Post", postSchema);

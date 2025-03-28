@@ -1,4 +1,5 @@
 import express from "express";
+import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
 import profileRoutes from "./routes/profile.route.js";
@@ -17,13 +18,14 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/posts", postRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server running on potr ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 });

@@ -1,29 +1,42 @@
-import React from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import FaceIcon from '@mui/icons-material/Face';
-import Groups2Icon from '@mui/icons-material/Groups2';
-import PostCreation from '../components/layout/PostCreation';
+import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { axiosInstance } from "../lib/axios";
+import FaceIcon from "@mui/icons-material/Face";
+import Groups2Icon from "@mui/icons-material/Groups2";
+import PostCreation from "../components/layout/PostCreation";
+import { set } from "mongoose";
 
 const HomePage = () => {
-  // Mock data
-  const { data: authUser } = useQuery({ queryKey: ["authUser"], staleTime: 1000 }); // get user data from backend\
+  const { data: authUser } = useQuery({
+    queryKey: ["authUser"],
+    staleTime: 1000,
+  });
 
-  console.log(authUser._id);
+  const { data: myPosts, isLoading } = useQuery({
+    queryKey: ["myPosts"],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/posts/allpost");
+      return res.data;
+    },
+  });
 
-  const { data: displayName } = authUser.username // To-do: will be changed to actual display name after user edits the profile
+  const { data: displayName } = authUser.username; // To-do: will be changed to actual display name after user edits the profile
 
   const recommendedUsers = []; // Empty array to hide the section
 
-  const posts = []; // Empty array to show "No Posts" state
+  if (isLoading) return null;
+  const testPicture = myPosts.posts[0].images[0];
+  console.log(testPicture);
 
   return (
-    <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="p-6 bg-white rounded-lg flex flex-col items-center justify-center w-70 h-96">
         <div className="mb-4">
           <FaceIcon
             style={{
-              fontSize: '4rem',
-              color: 'black'
+              fontSize: "4rem",
+              color: "black",
             }}
           />
         </div>
@@ -36,35 +49,33 @@ const HomePage = () => {
 
       {/* to do get icon from user and put above */}
 
+      <div className="col-span-1 lg:col-span-2 order-first lg:order-none">
+        <PostCreation />
 
-      <div className='col-span-1 lg:col-span-2 order-first lg:order-none'>
-        <PostCreation/>
-
-        {/* Create post above, get post below */}
-
-        {posts?.map((post) => (
-          // Post placeholder
-          <div key={post._id} className="mb-4 p-4 bg-white rounded-lg shadow">
-
+        {myPosts.posts?.map((post) => (
+          <div className="mb-4 p-4 bg-white rounded-lg shadow">
+            {post.images.length > 0 && (
+              <img src={`data:image/jpeg;base64,${post.images[0]}`} />
+            )}
           </div>
         ))}
 
-        {posts?.length === 0 && (
-          <div className='bg-white rounded-lg shadow p-8 text-center'>
-            <div className='mb-6'>
-              {/* Placeholder for Users icon */}
-            </div>
+        {myPosts.posts?.length === 0 && (
+          <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="mb-6">{/* Placeholder for Users icon */}</div>
 
             <div className="mb-4">
               <Groups2Icon
                 style={{
-                  fontSize: '4rem',
-                  color: 'black'
+                  fontSize: "4rem",
+                  color: "black",
                 }}
               />
             </div>
-            <h2 className='font-bold text-gray-800 text-3xl'>No Posts Yet</h2>
-            <p className='text-gray-800 '>Add friends to see their posts here!</p>
+            <h2 className="font-bold text-gray-800 text-3xl">No Posts Yet</h2>
+            <p className="text-gray-800 ">
+              Add friends to see their posts here!
+            </p>
           </div>
         )}
       </div>
@@ -74,4 +85,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage
+export default HomePage;
