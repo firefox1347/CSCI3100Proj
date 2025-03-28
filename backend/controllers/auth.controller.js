@@ -12,7 +12,7 @@ export const signup = async (req,res,next) =>{
     try {
         //validations
         const {password, dob, gender, email, username} = req.body;
-        if(!password || !dob || !gender || !email || !username){
+        if(!password || !email || !username){
             return res.status(400).json({success: false,message: "All information should be filled in"});
         }
         if(!genderCheck(gender)){
@@ -32,11 +32,9 @@ export const signup = async (req,res,next) =>{
         const verification_token = Math.floor(100000 + Math.random()*900000).toString();
 
 
-        //generate user and store to db
+        //generate user and store to db 
         const newUser = new User({
             password: hashedPassword, 
-            dob, 
-            gender, 
             email, 
             username,
             verification_token,

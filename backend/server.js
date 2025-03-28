@@ -17,7 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/post", postRoutes);
+app.use("/api/v1/posts", postRoutes);
 
 app.listen(PORT, ()=>{
     console.log(`Server running on potr ${PORT}`);

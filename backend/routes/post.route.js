@@ -2,9 +2,14 @@
 
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { createPost, getOnePost } from "../controllers/post.controller.js";
+import { commentPost, createPost, deletePost, getMyPost, getOnePost, getSomePost, likePost } from "../controllers/post.controller.js";
 const router = express.Router();
 
 router.post("/newpost", protectRoute, createPost);
-router.get("/:postid", protectRoute, getOnePost);
+router.get("/post/:postid", protectRoute, getOnePost);
+router.delete("/post/:postid", protectRoute, deletePost);
+router.get("/mypost", protectRoute, getMyPost);
+router.get("/somepost/:offset/:limit", protectRoute, getSomePost);
+router.post("/like/:postid", protectRoute, likePost);
+router.post("/comment/:postid", protectRoute, commentPost);
 export default router;

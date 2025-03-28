@@ -16,6 +16,10 @@ const postCommentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    noOfLikes: {
+        type: Number,
+        default: 0
+    },
     subComment: [{
         author: {
             type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +34,15 @@ const postCommentSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-    }]
+        noOfLikes: {
+            type: Number,
+            default: 0
+        }
+    }],
+    noOfSubComment: {
+        type: Number,
+        default: 0
+    }
 });
 
 const PostComment = mongoose.model("PostComment", postCommentSchema);

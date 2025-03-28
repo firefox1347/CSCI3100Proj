@@ -23,15 +23,19 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
+    noOfLikes: {
+        type: Number,
+        default: 0
+    },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "PostComment"
         //should The user have a list of their comment too?
     }],
-    share: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }]
+    noOfComments: {
+        type: Number,
+        default: 0
+    }
 
 });
 
