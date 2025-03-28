@@ -6,10 +6,26 @@ import Post from "../models/post.model.js";
 import User from "../models/user.model.js";
 
 //to do: cleanse the data so it don't include illegal symbol
+export const getPostOwner = async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Oops! User not found" });
+    }
+    const postOwner = {
+      username: user.display_name ? user.display_name : user.username,
+      avatar: user.avatar_url,
+    };
+    res.status(200).json({ success: true, postOwner: postOwner });
+  } catch (error) {}
+};
+
 export const createPost = async (req, res, next) => {
   try {
     const author = req.user;
-    console.log(req.body);
     const { content, images } = req.body;
     //to do: deal with images (make it data url format?)
     let newPost;

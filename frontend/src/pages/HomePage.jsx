@@ -7,14 +7,16 @@ import Groups2Icon from "@mui/icons-material/Groups2";
 import PostCreation from "../components/layout/PostCreation";
 import { set } from "mongoose";
 
+import FeedPost from "../components/layout/FeedPost";
+
 const HomePage = () => {
   const { data: authUser } = useQuery({
     queryKey: ["authUser"],
     staleTime: 1000,
   });
 
-  const { data: myPosts, isLoading } = useQuery({
-    queryKey: ["myPosts"],
+  const { data: allPosts, isLoading } = useQuery({
+    queryKey: ["allPosts"],
     queryFn: async () => {
       const res = await axiosInstance.get("/posts/allpost");
       return res.data;
@@ -26,8 +28,14 @@ const HomePage = () => {
   const recommendedUsers = []; // Empty array to hide the section
 
   if (isLoading) return null;
-  const testPicture = myPosts.posts[0].images[0];
-  console.log(testPicture);
+  const posts = [
+    {
+      _id: "post1",
+      img: "/img1.png",
+      username: "demoUser",
+      avatar: "/img2.png",
+    },
+  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -51,16 +59,21 @@ const HomePage = () => {
 
       <div className="col-span-1 lg:col-span-2 order-first lg:order-none">
         <PostCreation />
+        {/* Create post above, get post below */}
 
-        {myPosts.posts?.map((post) => (
-          <div className="mb-4 p-4 bg-white rounded-lg shadow">
-            {post.images.length > 0 && (
-              <img src={`data:image/jpeg;base64,${post.images[0]}`} />
-            )}
+        {allPosts?.posts.map((post) => (
+          // Post placeholder
+          <div key={post._id} className="mb-4 p-4 bg-white rounded-lg shadow">
+            <FeedPost
+              key={post._id}
+              img={post.images[0]}
+              userid={post.author}
+              content={post.content}
+            />
           </div>
         ))}
 
-        {myPosts.posts?.length === 0 && (
+        {allPosts.posts?.length === 0 && (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <div className="mb-6">{/* Placeholder for Users icon */}</div>
 

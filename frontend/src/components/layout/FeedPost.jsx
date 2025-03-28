@@ -1,0 +1,34 @@
+import { Box } from "@mui/material";
+import PostHeader from "./PostHeader";
+import PostFooter from "./PostFooter";
+import { axiosInstance } from "../../lib/axios";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+const FeedPost = ({ img, userid, content }) => {
+  const { data: postOwner, isLoading } = useQuery({
+    queryKey: ["postOwner"],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/posts/postowner/${userid}`);
+      console.log(res.data);
+      return res.data.postOwner;
+    },
+  });
+  if (isLoading) return null;
+
+  return (
+    <>
+      <PostHeader username={postOwner.username} avatar={postOwner.avatar_url} />
+      <Box sx={{ my: 2, borderRadius: 4, overflow: "hidden" }}>
+        {img && (
+          <img
+            src={`data:image/jpeg;base64,${img}`}
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
+        )}
+      </Box>
+      <PostFooter username={postOwner.username} content={content} />
+    </>
+  );
+};
+
+export default FeedPost;
