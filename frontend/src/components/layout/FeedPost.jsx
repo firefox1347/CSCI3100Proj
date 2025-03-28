@@ -6,13 +6,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const FeedPost = ({ img, userid, content }) => {
   const { data: postOwner, isLoading } = useQuery({
-    queryKey: ["postOwner"],
+    queryKey: ["postOwner", userid],  // Add userid to query key
     queryFn: async () => {
       const res = await axiosInstance.get(`/posts/postowner/${userid}`);
-      console.log(res.data);
       return res.data.postOwner;
     },
   });
+
   if (isLoading) return null;
 
   return (
