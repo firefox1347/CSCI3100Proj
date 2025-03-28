@@ -12,12 +12,12 @@ const FeedPost = ({ img, userid, content }) => {
       return res.data.postOwner;
     },
   });
-
+  console.log(postOwner);
   if (isLoading) return null;
 
   return (
     <>
-      <PostHeader username={postOwner.username} avatar={postOwner.avatar_url} />
+      <PostHeader username={postOwner.username} avatar={postOwner.avatar} />
       <Box sx={{ my: 2, borderRadius: 4, overflow: "hidden" }}>
         {img && (
           <img

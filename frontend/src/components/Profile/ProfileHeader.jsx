@@ -12,7 +12,6 @@ const ProfileHeader = (userProfile) => {
     const [editing, setEditing] = useState(false);
     const [editedData, setEditedData] = useState({});
     const queryClient = useQueryClient();
-    const testurl = "https://www.polyu.edu.hk/af/-/media/Department/AF/People/acad_staff/Dr-Chinedu-Increase-ONWACHUKWU/increase_.png?bc=ffffff&h=860&w=560&rev=cf8ede1ea62646d5aceef2c7c2e5304f&hash=4365276A5D977B480CC94487B0008529";
     const navigate = useNavigate();
     // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({ 
     //     queryKey: ["connectionStatus", userData._id],
@@ -79,8 +78,8 @@ const ProfileHeader = (userProfile) => {
         <div className="flex items-center justify-center">
           <div className="flex mr-20">
             <img
-              src={testurl}
-              alt="Rounded avatar"
+              src={userProfile.profileData.user.avatar_url || "../../../public/default-avatar.jpg"}
+              alt="Profile avatar"
               className="w-40 h-40 mr-4 rounded-full aspect-square"
               style={{
                 width: '200px',

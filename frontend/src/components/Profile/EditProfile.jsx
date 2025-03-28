@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../../lib/axios";
@@ -9,6 +9,9 @@ const EditProfile = () => {
   const [display_name, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [dob, setDob] = useState("");
+  const [avatar, setAvatar] = useState(null);
+const [previewAvatar, setPreviewAvatar] = useState("");
+const fileInputRef = useRef(null);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -32,10 +35,32 @@ const EditProfile = () => {
       toast.error(error.response?.data?.message || "An error occurred");
     },
   });
-  console.log(authUser);
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+  
+    setAvatar(file);
+    setPreviewAvatar(URL.createObjectURL(file));
+    e.target.value = null;
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    let base64Avatar = "";
+    if (avatar) {
+      base64Avatar = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(avatar);
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+      });
+    }
+
     const originalData = {
       display_name: authUser.display_name,
       // bio: authUser.bio,
@@ -49,6 +74,7 @@ const EditProfile = () => {
       dob: dob,
       gender: gender,
       user_id: authUser._id,
+      avatar: base64Avatar,
     };
     console.log(updatedData);
 
@@ -79,6 +105,44 @@ const EditProfile = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+      <div className="flex flex-col items-center mb-4">
+        <input
+          type="file"
+          ref={fileInputRef}
+          accept="image/*"
+          onChange={handleAvatarUpload}
+          className="hidden"
+        />
+        <div className="relative">
+          <img
+            src={previewAvatar || authUser.avatar_url || "../../../public/default-avatar.jpg"}
+            alt="Avatar preview"
+            className="w-32 h-32 rounded-full cursor-pointer mb-2"
+            onClick={() => fileInputRef.current.click()}
+          />
+          {previewAvatar && (
+            <button
+              type="button"
+              onClick={() => {
+                setPreviewAvatar("");
+                setAvatar(null);
+              }}
+              className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+            >
+              ×
+            </button>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current.click()}
+          className="text-blue-500 text-sm"
+        >
+          {avatar ? "Change Avatar" : "Upload Avatar"}
+        </button>
+      </div>
+
         <input
           type="text"
           placeholder={"display name"}
