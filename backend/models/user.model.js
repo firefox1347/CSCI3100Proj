@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+// to do: sysadmin, public/private 
 const userSchema = new mongoose.Schema(
   {
     avatar_url: {
@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema(
     follower: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     dm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dm" }],
-    collection: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}],
+    post_collection: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}],
     likePost: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
   },
   { timestamps: true }

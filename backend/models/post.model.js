@@ -9,29 +9,33 @@ const postSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required
+        required: true
     },
     content: {
         type: String,
-        required
+        required: true
     },
-    images: {
+    images: [{
         //not sure what type yet. Just put here first
         type: String,
-    },
+    }],
     likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
+    noOfLikes: {
+        type: Number,
+        default: 0
+    },
     comments: [{
-        //should we have a separaate model for comments so it can do more?
-
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PostComment"
         //should The user have a list of their comment too?
     }],
-    share: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }]
+    noOfComments: {
+        type: Number,
+        default: 0
+    }
 
 });
 
