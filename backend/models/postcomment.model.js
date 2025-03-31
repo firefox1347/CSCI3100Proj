@@ -3,19 +3,19 @@ const postCommentSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required
+        required: true
     },
     content: {
         type: String,
-        required
+        required: true
     },
     image: {
         type: String
     },
-    likes: {
+    likes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    },
+    }],
     noOfLikes: {
         type: Number,
         default: 0
@@ -24,16 +24,16 @@ const postCommentSchema = new mongoose.Schema({
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required
+            required: true
         },
         content: {
             type: String,
-            required
+            required: true
         },
-        likes: {
+        likes: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        },
+        }],
         noOfLikes: {
             type: Number,
             default: 0
