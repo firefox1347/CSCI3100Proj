@@ -61,39 +61,46 @@ export const createPost = async (req, res, next) => {
 };
 
 export const likePost = async (req, res, next) => {
-  //have bug
   try {
-    const postId = req.params.postid;
-    const userId = req.user._id;
-
-    const post = await Post.findById(postId);
-    const user = await User.findById(userId);
-    if (!post) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Oops! page not found" });
+    // console.log("Handling likePost");
+    const currentUser = req.user._id;
+    const postid = req.params.postid;
+    const updatedPost = await Post.findByIdAndUpdate(
+      postid,
+      [
+        {
+          $set: {
+            likes: {
+              $cond: [
+                { $in: [currentUser, "$likes"] }, //If user in likes
+                { $setDifference: ["$likes", [currentUser]] }, // Remove user
+                { $concatArrays: ["$likes", [currentUser]] }    // Add user
+              ]
+            },
+            noOfLikes: {
+              $cond: [
+                { $in: [currentUser, "$likes"] },  //If user in likes
+                { $subtract: ["$noOfLikes", 1] },  // Decrement
+                { $add: ["$noOfLikes", 1] }        // Increment
+              ]
+            }
+          }
+        }
+      ],
+      { new: true }
+    );
+    if (!updatedPost) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found"
+      });
     }
-    if (user.likePost.includes(postId)) {
-      //handle unlike logic
-      post.noOfLikes = post.noOfLikes - 1;
-      post.likes = post.likes.filter((uid) => uid.toString !== userId);
-      user.likePost = user.likePost.filter((pid) => pid.toString !== postId);
-      res
-        .status(200)
-        .json({ success: true, message: "Unliked Post Successfully" });
-    } else {
-      //handle like logic
-      post.noOfLikes = post.noOfLikes + 1;
-      post.likes = post.likes.push(userId);
-      user.likePost = user.likePost.push(postId);
 
-      // to do: give notification to author of post? used message queue?
-      res
-        .status(200)
-        .json({ success: true, message: "Liked Post Successfully" });
-    }
-    user.save();
-    post.save();
+    res.status(200).json({
+      success: true,
+      post: updatedPost
+    });
+
   } catch (error) {
     console.error("Error in likePost", error.message);
     res
@@ -102,10 +109,43 @@ export const likePost = async (req, res, next) => {
   }
 };
 
-export const commentPost = async (req, res, next) => {
+export const commentPost = async (req, res) => {
   try {
-    const postid = req.params.postid;
-  } catch (error) {}
+    const { content } = req.body;
+    const postId = req.params.postid;
+    const author = req.user._id;
+    const populatedComment = await PostComment.findById(newComment._id)
+      .populate('author', 'username');
+
+    if (!content?.trim()) {
+      return res.status(400).json({ success: false, message: "Comment cannot be empty" });
+    }
+
+    const newComment = await PostComment.create({
+      author,
+      content,
+      post: postId,
+    });
+
+    // Update parent post's comment count
+    await Post.findByIdAndUpdate(postId, {
+      $push: { comments: newComment._id },
+      $inc: { noOfComments: 1 }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Comment posted successfully",
+      comment: populatedComment
+    });
+
+  } catch (error) {
+    console.error("Comment error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message + "Failed to post comment"
+    });
+  }
 };
 
 export const getOnePost = async (req, res, next) => {
@@ -195,6 +235,24 @@ export const deletePost = async (req, res, next) => {
       .json({ message: false, message: "Oops something went wrong" });
   }
 };
+
+export const getPostLikes = async(req, res, next) => {
+  try {
+  const postid = req.params.postid;
+    let postLikes = await Post.findById(postid).select("likes noOfLikes");
+    if (!postLikes) {
+      res
+        .status(404)
+        .json({ success: false, message: "The post don't exists" });
+    }
+    res.status(200).json({ success: true, post: postLikes });
+  } catch (error) {
+    console.error("Error in getPostLikes", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Oops something went wrong" });
+  }
+}
 
 export const savePost = async (req, res, next) => {
   try {
