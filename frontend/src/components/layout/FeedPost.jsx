@@ -4,7 +4,7 @@ import PostFooter from "./PostFooter";
 import { axiosInstance } from "../../lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const FeedPost = ({ img, userid, content }) => {
+const FeedPost = ({ postid, img, userid, content }) => {
   const { data: postOwner, isLoading } = useQuery({
     queryKey: ["postOwner", userid],  // Add userid to query key
     queryFn: async () => {
@@ -26,7 +26,7 @@ const FeedPost = ({ img, userid, content }) => {
           />
         )}
       </Box>
-      <PostFooter username={postOwner.username} content={content} />
+      <PostFooter username={postOwner.username} content={content} postid={postid}/>
     </>
   );
 };
