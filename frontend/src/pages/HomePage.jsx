@@ -66,6 +66,7 @@ const HomePage = () => {
           <div key={post._id} className="mb-4 p-4 bg-white rounded-lg shadow">
             <FeedPost
               key={post._id}
+              postid={post._id}
               img={post.images[0]}
               userid={post.author}
               content={post.content}
