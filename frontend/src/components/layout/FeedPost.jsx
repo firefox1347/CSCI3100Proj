@@ -6,13 +6,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const FeedPost = ({ postid, img, userid, content }) => {
   const { data: postOwner, isLoading } = useQuery({
-    queryKey: ["postOwner", userid],  // Add userid to query key
+    queryKey: ["postOwner", userid], // Add userid to query key
     queryFn: async () => {
       const res = await axiosInstance.get(`/posts/postowner/${userid}`);
       return res.data.postOwner;
-    },
+    }, // Only run the query if userid is available
   });
-  console.log(postOwner);
   if (isLoading) return null;
 
   return (
@@ -26,7 +25,11 @@ const FeedPost = ({ postid, img, userid, content }) => {
           />
         )}
       </Box>
-      <PostFooter username={postOwner.username} content={content} postid={postid}/>
+      <PostFooter
+        username={postOwner.username}
+        content={content}
+        postid={postid}
+      />
     </>
   );
 };
