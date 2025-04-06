@@ -110,7 +110,7 @@ export const createSubComment = async (req, res) => {
 export const likeComment = async (req, res) => {
     try {  
       const comment = await PostComment.findById(req.params.commentid);
-      console.log(comment)
+      // console.log(comment)
       
       if (!comment) {
         return res.status(404).json({
