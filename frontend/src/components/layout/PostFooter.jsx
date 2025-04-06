@@ -3,6 +3,7 @@ import { useState } from "react";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import toast from "react-hot-toast";
 import ViewAllComments from "./ViewAllComments";
 import { createComment } from "./commentHandle";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -12,22 +13,21 @@ const PostFooter = ({ username, content, postid }) => {
   const queryClient = useQueryClient();
   const [viewCommentsOpen, setViewCommentsOpen] = useState(false);
 
-
   const { data: currentUser } = useQuery({
-    queryKey: ['currentUser'],
+    queryKey: ["currentUser"],
     queryFn: async () => {
-      const res = await axiosInstance.get('/auth/me');
+      const res = await axiosInstance.get("/auth/me");
       return res.data;
-    }
+    },
   });
 
   const { data: postData } = useQuery({
-    queryKey: ['post', postid],
+    queryKey: ["post", postid],
     queryFn: async () => {
       const res = await axiosInstance.get(`/posts/post/${postid}/likes`);
       return res.data.post;
     },
-    enabled: !!postid
+    enabled: !!postid,
   });
 
   // console.log("postData Received!");
@@ -36,12 +36,12 @@ const PostFooter = ({ username, content, postid }) => {
   const { mutate: toggleLike } = useMutation({
     mutationFn: () => axiosInstance.post(`/posts/like/${postid}`),
     onSuccess: () => {
-      queryClient.invalidateQueries(['post', postid]);
+      queryClient.invalidateQueries(["post", postid]);
     },
     onError: (error) => {
-      console.error('Like error:', error);
-      toast.error(error.response?.data?.message + 'Failed to update like');
-    }
+      console.error("Like error:", error);
+      toast.error(error.response?.data?.message + "Failed to update like");
+    },
   });
 
   const handleLike = () => {
@@ -53,7 +53,7 @@ const PostFooter = ({ username, content, postid }) => {
       {/* Like and comment button */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, mt: 2 }}>
         <IconButton onClick={handleLike} size="small">
-          {postData?.likes?.some(id => id === currentUser?._id) ? (
+          {postData?.likes?.some((id) => id === currentUser?._id) ? (
             <ThumbUpAltIcon color="primary" />
           ) : (
             <ThumbUpOffAltIcon />
@@ -63,7 +63,7 @@ const PostFooter = ({ username, content, postid }) => {
           <ChatBubbleOutlineIcon />
         </IconButton>
       </Box>
-        
+
       {/* Likes count */}
       <Typography
         variant="body2"
@@ -72,12 +72,12 @@ const PostFooter = ({ username, content, postid }) => {
       >
         {postData?.noOfLikes?.toLocaleString() || 0} likes
       </Typography>
-      
+
       {/* Username and content of post */}
       <Typography variant="body2" sx={{ mb: 0.5, color: "black" }}>
         <span style={{ fontWeight: "bold" }}>{username}</span> {content}
       </Typography>
-      
+
       {/* All comment window */}
       <ViewAllComments
         open={viewCommentsOpen}

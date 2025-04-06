@@ -7,18 +7,66 @@ import { set } from "mongoose";
 import EditProfile from "./EditProfile";
 
 const ProfileHeader = (userProfile) => {
- 
-    //console.log(userProfile.profileData.profile.username);
-    const [editing, setEditing] = useState(false);
-    const [editedData, setEditedData] = useState({});
-    const queryClient = useQueryClient();
-    const navigate = useNavigate();
-    // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({ 
-    //     queryKey: ["connectionStatus", userData._id],
-    //     queryFn: () => axiosInstance.get(`/connections/status/${userData._id} `),
-    //     enabled: !isSelfProfile,
-    // });
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  //console.log(userProfile.profileData.profile.username);
+  const [editing, setEditing] = useState(false);
+  const [editedData, setEditedData] = useState({});
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({
+  //     queryKey: ["connectionStatus", userData._id],
+  //     queryFn: () => axiosInstance.get(`/connections/status/${userData._id} `),
+  //     enabled: !isSelfProfile,
+  // });
+  const { data: authUser, isLoading } = useQuery({ queryKey: ["authUser"] });
+  const targetId = userProfile.profileData.user._id;
+  const { data: followStatus } = useQuery({
+    queryKey: ["followStatus", authUser?._id, targetId],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/user/${targetId}/followstatus`);
+      return res.data; // Assuming API returns { isFollowing: boolean }
+    },
+    enabled: !!authUser && !!targetId, // Only run when both users are available
+
+    onError: (error) => {
+      console.error("Error checking follow status:", error);
+    },
+  });
+
+  const follow = useMutation({
+    mutationFn: (targetId) => axiosInstance.post(`/user/follow/${targetId}`),
+    onSuccess: () => {
+      toast.success("Followed successfully");
+      queryClient.invalidateQueries(["followStatus", authUser?._id, targetId]);
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "An error occurred");
+    },
+  });
+
+  const unfollow = useMutation({
+    mutationFn: (targetId) => axiosInstance.post(`/user/unfollow/${targetId}`),
+    onSuccess: () => {
+      toast.success("Unfollowed successfully");
+      queryClient.invalidateQueries(["followStatus", authUser?._id, targetId]);
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "An error occurred");
+    },
+  });
+
+  const isFollowing = followStatus?.isFollowing;
+  const followersList = followStatus?.followersList;
+  const followingList = followStatus?.followingList;
+  const numberOfFollowers = followStatus?.numberOfFollowers;
+  const numberOfFollowing = followStatus?.numberOfFollowing;
+
+  const handleFollow = (targetId) => {
+    if (isFollowing) {
+      unfollow.mutate(targetId);
+    } else {
+      follow.mutate(targetId);
+    }
+  };
   // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({
   //     queryKey: ["connectionStatus", userData._id],
   //     queryFn: () => axiosInstance.get(`/connections/status/${userData._id} `),
@@ -62,15 +110,13 @@ const ProfileHeader = (userProfile) => {
   // 	},
   // });
 
-    const handleEdit = () => {
-      if (userProfile.isSelfProfile){
-        navigate(`edit`);
-      }
-      else{
-        toast.error("You can only edit your own profile");
-      }
+  const handleEdit = () => {
+    if (userProfile.isSelfProfile) {
+      navigate(`edit`);
+    } else {
+      toast.error("You can only edit your own profile");
     }
-
+  };
 
   return (
     <>
@@ -78,14 +124,17 @@ const ProfileHeader = (userProfile) => {
         <div className="flex items-center justify-center">
           <div className="flex mr-20">
             <img
-              src={userProfile.profileData.user.avatar_url || "../../../public/default-avatar.jpg"}
+              src={
+                userProfile.profileData.user.avatar_url ||
+                "../../../public/default-avatar.jpg"
+              }
               alt="Profile avatar"
               className="w-40 h-40 mr-4 rounded-full aspect-square"
               style={{
-                width: '200px',
-                height: '200px', 
-                borderRadius: '50%', 
-                objectFit: 'cover', 
+                width: "200px",
+                height: "200px",
+                borderRadius: "50%",
+                objectFit: "cover",
               }}
             />
           </div>
@@ -95,8 +144,8 @@ const ProfileHeader = (userProfile) => {
               <div className="flex text-[1.1vw] font-bold h-10 items-center">
                 {userProfile.profileData.profile.username}
               </div>
-              { userProfile.isSelfProfile ? (
-                  <div className="flex items-center justify-center">
+              {userProfile.isSelfProfile ? (
+                <div className="flex items-center justify-center">
                   <button
                     className="flex items-center justify-center text-[1.1vw] w-full bg-white text-black mx-4 py-2 px-10 rounded-full hover:bg-primary-dark border-2 transition duration-300 h-10"
                     onClick={handleEdit}
@@ -104,8 +153,18 @@ const ProfileHeader = (userProfile) => {
                     Edit Profile
                   </button>
                 </div>
-              ) : null }
-              
+              ) : (
+                <div className="flex items-center justify-center">
+                  <button
+                    className="flex items-center justify-center text-[1.1vw] w-full bg-white text-black mx-4 py-2 px-10 rounded-full hover:bg-primary-dark border-2 transition duration-300 h-10"
+                    onClick={() => {
+                      handleFollow(targetId);
+                    }}
+                  >
+                    {isFollowing ? "Unfollow" : "Follow"}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex items-start space-between mt-4 w-full">
@@ -113,20 +172,20 @@ const ProfileHeader = (userProfile) => {
                 0 Post
               </div>
               <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
-                158 Followers
+                {numberOfFollowers} Followers
               </div>
               <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
-                1964 Following
+                {numberOfFollowing} Following
               </div>
             </div>
             <div>
               <div className="flex items-start text-[1.1vw] font-bold mb-5">
-              {userProfile.profileData.user.display_name}
+                {userProfile.profileData.user.display_name}
               </div>
               <div className="flex flex-col max-w-[450px] break-words text-[1.1vw]">
-              {userProfile.profileData.profile.bio}
+                {userProfile.profileData.profile.bio}
+              </div>
             </div>
-            </div>            
           </div>
         </div>
         <div class="flex flex-col p-1 sm:p-2 max-w-full mx-auto border-t border-white border-opacity-30"></div>
