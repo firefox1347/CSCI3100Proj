@@ -89,6 +89,25 @@ export const likePost = async (req, res, next) => {
       ],
       { new: true }
     );
+    
+    const user = await User.findByIdAndUpdate(
+      currentUser,
+      [
+        {
+          $set: {
+            likePost: {
+              $cond: [
+                { $in: [postid, "$likePost"] },
+                { $setDifference: ["$likePost", [postid]] },
+                { $concatArrays: ["$likePost", [postid]] }
+              ]
+            }
+          }
+        }
+      ],
+      { new: true}
+    );
+
     if (!updatedPost) {
       return res.status(404).json({
         success: false,
