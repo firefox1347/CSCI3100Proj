@@ -46,7 +46,7 @@ const ProfilePage = () => {
       <div className="p-4 max-w-4xl w-full mx-auto">
         {<ProfileHeader profileData={userProfile} isSelfProfile={isSelfProfile} />}
         <ProfileTabs />
-        <ProfilePosts />
+        <ProfilePosts username={authUser.username} />
       </div>
     </>
   );
