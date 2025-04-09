@@ -13,6 +13,7 @@ import {
   getAllPost,
   getPostOwner,
   getPostLikes,
+  getTargetPost,
 } from "../controllers/post.controller.js";
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.get("/somepost/:offset/:limit", protectRoute, getSomePost);
 router.post("/like/:postid", protectRoute, likePost);
 router.post("/comment/:postid", protectRoute, commentPost);
 router.get("/post/:postid/likes", protectRoute, getPostLikes);
+router.get("/userposts/:userid", protectRoute, getTargetPost);
 
 export default router;

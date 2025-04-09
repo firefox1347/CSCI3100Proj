@@ -167,10 +167,22 @@ export const commentPost = async (req, res) => {
   }
 };
 
+
 export const getOnePost = async (req, res, next) => {
   try {
     const postid = req.params.postid;
-    let onePost = await Post.findById(postid).select("author content images");
+    let onePost = await Post.findById(postid)
+    .populate({
+      path: 'author',
+      select: 'username avatar_url'
+    })
+    .populate({
+      path: 'comments',
+      populate: {
+        path: 'author',
+        select: 'username avatar_url'
+      }
+    });
     if (!onePost) {
       res
         .status(404)
@@ -189,7 +201,9 @@ export const getMyPost = async (req, res, next) => {
   try {
     //to do: offset and limit
     const userID = req.user._id;
-    const myPostList = await Post.find({ author: userID });
+    const myPostList = await Post.find({ author: userID })
+      .sort({ createdAt: -1 }) // sort newest first
+      .populate('author', 'username avatar_url');
     res.status(200).json({ success: true, posts: myPostList });
   } catch (error) {
     console.error("Error in getMyPost", error.message);
@@ -287,4 +301,34 @@ export const modifyPost = async (req, res, next) => {
 export const updatePost = async (req, res, next) => {
   try {
   } catch (error) {}
+};
+
+export const getTargetPost = async (req, res, next) => {
+  try {
+    const targetUserId = req.params.userid;
+    
+    // Verify target user exists
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const targetPosts = await Post.find({ author: targetUserId })
+      .populate('author', 'username avatar_url')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      posts: targetPosts
+    });
+  } catch (error) {
+    console.error("Error in getTargetPost:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user posts"
+    });
+  }
 };

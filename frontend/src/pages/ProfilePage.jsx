@@ -23,6 +23,7 @@ const ProfilePage = () => {
     },
   });
   if (isUserProfileLoading) return null;
+  //console.log(authUser.username);
   // const { mutate: updateProfile } = useMutation({
   // 	mutationFn: async (profileData) => {
   // 		await axiosInstance.put("/users/profile", profileData);
@@ -46,7 +47,7 @@ const ProfilePage = () => {
       <div className="p-4 max-w-4xl w-full mx-auto">
         {<ProfileHeader profileData={userProfile} isSelfProfile={isSelfProfile} />}
         <ProfileTabs />
-        <ProfilePosts />
+        <ProfilePosts  username={isSelfProfile ? authUser.username : userProfile.user.username} isSelfProfile={isSelfProfile} />
       </div>
     </>
   );
