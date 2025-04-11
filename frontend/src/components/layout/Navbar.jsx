@@ -38,7 +38,7 @@ const Navbar = () => {
   });
   if (isLoading) return null;
   return (
-    <div className="bg-gray-800 h-10 flex items-center justify-between">
+    <div className="bg-gray-800 h-10 flex items-center justify-between sticky top-0 z-50">
       {authUser ? (
         <>
           <div className="flex space-x-4">

@@ -5,6 +5,10 @@ import { axiosInstance } from "../lib/axios";
 import FaceIcon from "@mui/icons-material/Face";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import PostCreation from "../components/layout/PostCreation";
+import HomeIcon from "@mui/icons-material/Home";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import PeopleIcon from "@mui/icons-material/People";
+import { Link } from "react-router-dom";
 import { set } from "mongoose";
 
 import FeedPost from "../components/layout/FeedPost";
@@ -22,8 +26,8 @@ const HomePage = () => {
       return res.data;
     },
   });
-
-  const { data: displayName } = authUser.username; // To-do: will be changed to actual display name after user edits the profile
+ 
+  const displayName = authUser.display_name ? authUser.display_name : authUser.username;
 
   const recommendedUsers = []; // Empty array to hide the section
 
@@ -39,7 +43,7 @@ const HomePage = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="p-6 bg-white rounded-lg flex flex-col items-center justify-center w-70 h-96">
+      <div className="p-6 bg-white rounded-lg flex flex-col items-center justify-center w-70 h-96 sticky">
         <div className="mb-4">
           <FaceIcon
             style={{
@@ -51,8 +55,35 @@ const HomePage = () => {
         <p className="font-bold text-center text-gray-800 text-xl">
           {displayName ? displayName : authUser.username}
         </p>
-        <div className="h-20 bg-white"></div>
-        <div className="h-20 bg-white"></div>
+        <div className="flex flex-col space-y-6 w-full">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Home"
+          >
+            <HomeIcon fontSize="large" className="text-gray-700" />
+            <span className="text-lg" style={{color: "black"}}>Home</span>
+          </Link>
+
+          <Link
+            to="/friend"
+            className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Friends"
+          >
+            <PeopleIcon fontSize="large" className="text-gray-700" />
+            <span className="text-lg" style={{color: "black"}}>Friends</span>
+          </Link>
+
+          <Link
+            to={`/profile/${authUser.username}`}
+            className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Profile"
+          >
+            <AccountBoxIcon fontSize="large" className="text-gray-700" />
+            <span className="text-lg" style={{color: "black"}}>Profile</span>
+          </Link>
+        </div>
+
       </div>
 
       {/* to do get icon from user and put above */}
