@@ -185,3 +185,140 @@ export const getFollowStatus = async (req, res, next) => {
     });
   }
 };
+
+export const getFollowStatusById = async (req, res, next) => {
+  try {
+    const { target } = req.params;
+
+    // Check if target user exists
+    const targetUser = await Users.findById(target);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Target user not found",
+      });
+    }
+
+    const followersList = targetUser.follower;
+    const followingList = targetUser.following;
+
+    const getRandomSubset = (array, n) => {
+      const shuffled = array.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, n);
+    };
+
+    const randomFollowers = getRandomSubset(followersList, 5);
+
+    // Function to process followers and get their followings
+    async function processFollowers(followersList) {
+      try {
+        const followerFollowings = await Promise.all(
+          followersList.map((id) => getFollowListForLoopId(id))
+        );
+        return followerFollowings;
+      } catch (error) {
+        console.error("Error fetching follow lists:", error);
+        return [];
+      }
+    }
+
+    const followerFollowings = await processFollowers(randomFollowers);
+
+    // console.log(followerFollowings); This ok
+
+    // Delete the ones user already following (including user)
+
+    const followerFollowingsIds = [];
+
+    followerFollowings.forEach(id => {
+      const idStr = id.toString();
+      // console.log(idStr);
+      idStr.split(',').forEach(singleId => {
+        followerFollowingsIds.push(singleId.trim());
+      });
+
+    }) // IMPORTANT : Make them into id form.
+
+    const resultFromEliminate = [];
+
+    followerFollowingsIds.forEach(id => {
+      // console.log("id is" + id);
+      let found = false;
+      followingList.forEach(followingId => {
+        if (followingId === id) {
+          found = true;
+        }
+      });
+
+      if (!found && id !== target) {
+        resultFromEliminate.push(id);
+        // console.log("Pushed");
+      }
+    });
+
+    const eliminatedfollowerFollowings = resultFromEliminate;
+
+    // console.log(eliminatedfollowerFollowings);  DONE DONE DONE
+
+    const count = {};
+
+    // const testarrayformany = ["a", "a", "d", "d", "d", "b", "c", "a"]
+
+    eliminatedfollowerFollowings.forEach(id => {
+      count[id] = (count[id] || 0) + 1;
+    });
+
+    const largestThree = Object.keys(count)
+    .sort((a, b) => count[b] - count[a])
+    .slice(0, 3);
+
+    res.status(200).json({
+      success: true,
+      largestThree: largestThree
+    });
+  } catch (error) {
+    console.error("Error fetching follow status:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching follow status",
+    });
+  }
+};
+
+const getFollowListForLoopId = async (id) => {
+  try {
+    const targetUser = await Users.findById(id);
+
+    if (!targetUser) {
+      console.log("Target user not found.")
+    }
+
+    return targetUser.following;
+  } catch (error) {
+    console.error("Error in get follow list:", error.message);
+    return;
+  }
+};
+
+export const getUserInfo = async (req, res, next) => {
+  try {
+    const userId = req.params.userid;
+    const user = await Users.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Oops! User not found" });
+    }
+    const userInfo = {
+      username: user.display_name ? user.display_name : user.username,
+      avatar: user.avatar_url,
+      name: user.username
+    };
+    
+    res.status(200).json({ success: true, userInfo: userInfo });
+  } catch (error) {}
+};
+
+
+
+

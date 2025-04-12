@@ -10,6 +10,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import PeopleIcon from "@mui/icons-material/People";
 import { Link } from "react-router-dom";
 import { set } from "mongoose";
+import UserCard from "../components/layout/UserCard";
 
 import FeedPost from "../components/layout/FeedPost";
 
@@ -26,10 +27,23 @@ const HomePage = () => {
       return res.data;
     },
   });
- 
-  const displayName = authUser.display_name ? authUser.display_name : authUser.username;
 
-  const recommendedUsers = []; // Empty array to hide the section
+  const { data: currentUserFollowStatus, error } = useQuery({
+    queryKey: ["followStatus", authUser?._id],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/user/${authUser?._id}/followstatusbyId`);
+      return res.data;
+    },
+    enabled: !!authUser,
+    staleTime: Infinity,
+  });
+
+  // console.log(currentUserFollowStatus.largestThree);
+
+  const displayName = authUser?.display_name ? authUser.display_name : authUser?.username;
+
+  const recommendedUsers = currentUserFollowStatus?.largestThree || [];
+  
 
   if (isLoading) return null;
   const posts = [
@@ -56,13 +70,13 @@ const HomePage = () => {
           {displayName ? displayName : authUser.username}
         </p>
         <div className="flex flex-col space-y-6 w-full">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
             title="Home"
           >
             <HomeIcon fontSize="large" className="text-gray-700" />
-            <span className="text-lg" style={{color: "black"}}>Home</span>
+            <span className="text-lg" style={{ color: "black" }}>Home</span>
           </Link>
 
           <Link
@@ -71,7 +85,7 @@ const HomePage = () => {
             title="Friends"
           >
             <PeopleIcon fontSize="large" className="text-gray-700" />
-            <span className="text-lg" style={{color: "black"}}>Friends</span>
+            <span className="text-lg" style={{ color: "black" }}>Friends</span>
           </Link>
 
           <Link
@@ -80,7 +94,7 @@ const HomePage = () => {
             title="Profile"
           >
             <AccountBoxIcon fontSize="large" className="text-gray-700" />
-            <span className="text-lg" style={{color: "black"}}>Profile</span>
+            <span className="text-lg" style={{ color: "black" }}>Profile</span>
           </Link>
         </div>
 
@@ -126,6 +140,23 @@ const HomePage = () => {
       </div>
 
       {/* Removed recommended users section */}
+
+      <div className="hidden lg:block col-span-1">
+        <div className="p-6 bg-white rounded-lg">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
+            Recommended Users
+          </h2>
+          {recommendedUsers?.length === 0 ? (
+            <p className="text-gray-500 text-sm">
+              No recommendations available
+            </p>
+          ) : (
+            recommendedUsers?.map((userId) => (
+              <UserCard key={userId} userid={userId} />
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 };
