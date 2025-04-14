@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 import { set } from "mongoose";
 import EditProfile from "./EditProfile";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const ProfileHeader = (userProfile) => {
   //console.log(userProfile.profileData.profile.username);
@@ -17,7 +18,7 @@ const ProfileHeader = (userProfile) => {
   //     queryFn: () => axiosInstance.get(`/connections/status/${userData._id} `),
   //     enabled: !isSelfProfile,
   // });
-  const { data: authUser, isLoading } = useQuery({ queryKey: ["authUser"] });
+  const { data: authUser, isLoading } = useAuthUser();
   const targetId = userProfile.profileData.user._id;
   const { data: followStatus } = useQuery({
     queryKey: ["followStatus", authUser?._id, targetId],

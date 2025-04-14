@@ -9,25 +9,10 @@ import { useQuery } from "@tanstack/react-query";
 import ProfilePage from "./pages/ProfilePage";
 import { useLocation } from "react-router-dom";
 import EditProfile from "./components/Profile/EditProfile";
+import { useAuthUser } from "./hooks/useAuthUser"
 
 function App() {
-  const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      try {
-        const res = await axiosInstance.get("/auth/me");
-        //console.log(res.data);
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          return null;
-        }
-        toast.error(err.response.data.message || "Something went wrong");
-      }
-    },
-  });
-
-
+  const { data: authUser, isLoading } = useAuthUser();
   const location = useLocation();
   console.log("Current Location:", location.pathname);
 

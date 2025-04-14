@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../../lib/axios";
 import { useNavigate } from "react-router-dom";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const EditProfile = () => {
   const [gender, setGender] = useState("");
@@ -16,9 +17,7 @@ const fileInputRef = useRef(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { data: authUser } = useQuery({
-    queryKey: ["authUser"],
-  });
+  const { data: authUser } = useAuthUser();
 
   console.log(authUser._id);
   const originalName = authUser.username;

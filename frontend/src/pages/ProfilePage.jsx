@@ -6,13 +6,12 @@ import ProfileHeader from "../components/Profile/ProfileHeader";
 import ProfileTabs from "../components/Profile/ProfileTabs";
 import { ProfilePosts } from "../components/Profile/profilePosts";
 import { useEffect, useState } from "react";
+import { useAuthUser } from "../hooks/useAuthUser";
 
 const ProfilePage = () => {
   const { username } = useParams();
   // const queryClient = useQueryClient();
-  const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"],
-  });
+  const { data: authUser, isLoading } = useAuthUser();
   const isSelfProfile = username === authUser.username;
 
   const { data: userProfile, isLoading: isUserProfileLoading } = useQuery({

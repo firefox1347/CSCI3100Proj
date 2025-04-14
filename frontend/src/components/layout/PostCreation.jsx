@@ -3,6 +3,7 @@ import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const PostCreation = () => {
   const [input, setInput] = useState("");
@@ -11,10 +12,7 @@ const PostCreation = () => {
   const fileInputRef = useRef(null);
   const [previewUrls, setPreviewUrls] = useState([]);
 
-  const { data: authUser } = useQuery({
-    queryKey: ["authUser"],
-    staleTime: 1000,
-  }); // get user data from backend\
+  const { data: authUser } = useAuthUser(); // get user data from backend\
 
   useEffect(() => {
     // Clean up object URLs when component unmounts

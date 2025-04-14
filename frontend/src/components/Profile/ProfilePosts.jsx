@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { axiosInstance } from "../../lib/axios";
 import PostModal from "../layout/PostModal";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 
 export const ProfilePosts = ({ username, isSelfProfile }) => {
   const [selectedPostId, setSelectedPostId] = useState(null);
-  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+  const { data: authUser } = useAuthUser();
 
   const { data: targetUser } = useQuery({
     queryKey: ["targetUser", username],

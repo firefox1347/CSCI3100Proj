@@ -11,14 +11,11 @@ import PeopleIcon from "@mui/icons-material/People";
 import { Link } from "react-router-dom";
 import { set } from "mongoose";
 import UserCard from "../components/layout/UserCard";
-
 import FeedPost from "../components/layout/FeedPost";
+import { useAuthUser } from "../hooks/useAuthUser";
 
 const HomePage = () => {
-  const { data: authUser } = useQuery({
-    queryKey: ["authUser"],
-    staleTime: 1000,
-  });
+  const { data: authUser } = useAuthUser();
 
   const { data: allPosts, isLoading } = useQuery({
     queryKey: ["allPosts"],

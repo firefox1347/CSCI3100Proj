@@ -8,23 +8,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import PeopleIcon from "@mui/icons-material/People";
 import SearchBar from "./SearchBar";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const Navbar = () => {
-  const { data: authUser, isLoading } = useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      try {
-        const res = await axiosInstance.get("/auth/me");
-        //console.log(res.data);
-        return res.data;
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          return null;
-        }
-        toast.error(err.response.data.message || "Something went wrong");
-      }
-    },
-  });
+  const { data: authUser, isLoading } = useAuthUser();
   const queryClient = useQueryClient();
 
   const { mutate: logout } = useMutation({
