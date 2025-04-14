@@ -174,14 +174,21 @@ export const getOnePost = async (req, res, next) => {
     let onePost = await Post.findById(postid)
     .populate({
       path: 'author',
-      select: 'username avatar_url'
+      select: 'username avatar_url',
+      model: 'User'
     })
     .populate({
       path: 'comments',
-      populate: {
-        path: 'author',
-        select: 'username avatar_url'
-      }
+      populate: [
+        {
+          path: 'author',
+          select: 'username avatar_url'
+        },
+        {
+          path: 'subComment.author',
+          select: 'username avatar_url'
+        }
+      ]
     });
     if (!onePost) {
       res

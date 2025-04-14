@@ -30,6 +30,11 @@ export const ProfilePosts = ({ username, isSelfProfile }) => {
     enabled: isSelfProfile || !!targetUser?._id
   });
 
+  const handlePostClick = (postId) => {
+    if (postId) setSelectedPostId(postId);
+  };
+
+
   if (isLoading) return <div>Loading posts...</div>;
 
   return (
@@ -39,7 +44,7 @@ export const ProfilePosts = ({ username, isSelfProfile }) => {
           <div 
             key={post._id} 
             className="relative aspect-square cursor-pointer"
-            onClick={() => setSelectedPostId(post._id)}
+            onClick={() => handlePostClick(post?._id)}
           >
             <img
               src={`data:image/jpeg;base64,${post.images[0]}`}
