@@ -15,6 +15,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 const ViewAllComments = ({ open, onClose, postid }) => {
   const [newComment, setNewComment] = useState("");
@@ -23,13 +24,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
   const queryClient = useQueryClient();
 
   // Fetch user
-  const { data: currentUser } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/auth/me");
-      return res.data;
-    },
-  });
+  const { data: currentUser } = useAuthUser();
 
   // Fetch Comments
   const {
