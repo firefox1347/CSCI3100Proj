@@ -17,6 +17,7 @@ const UserCard = ({ userid }) => {
 
     if (isLoading) return <div className="animate-pulse">Loading...</div>;
     if (!userInfo) return null;
+
   
     const displayName = userInfo.username;
     const profileName = userInfo.name;
@@ -25,7 +26,7 @@ const UserCard = ({ userid }) => {
     return (
       <div className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors">
         <Link 
-          to={`/profile/${displayName}`}
+          to={`/profile/${profileName}`}
           className="flex items-center space-x-3 w-full"
         >
           <img
