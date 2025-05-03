@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from '../../lib/axios';
-import { Button, IconButton, Skeleton, TextField, Typography } from '@mui/material';
+import { Button, Grid2, IconButton, Skeleton, TextField, Typography } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import toast from 'react-hot-toast';
 import { ReplyIcon } from 'lucide-react';
+import DeleteForeverSharpIcon from '@mui/icons-material/DeleteForeverSharp';
+import Grid from '@mui/material/Grid';
 
 const PostModal = ({ postId, onClose }) => {
   const queryClient = useQueryClient();
@@ -271,6 +273,9 @@ const PostModal = ({ postId, onClose }) => {
                   Cancel
                 </Button>
               )}
+              <Grid2 size={8} class="mt-1">
+                <DeleteForeverSharpIcon fontSize='large'/>
+              </Grid2>
             </div>
           </div>
         </div>

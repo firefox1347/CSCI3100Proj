@@ -71,6 +71,11 @@ const PostCreation = () => {
       return;
     }
 
+    if (images.length === 0) { // Require at least one image
+      setErrorMessage("You must upload at least one image to post");
+      return;
+    }
+
     try {
       // Convert image files to base64 strings (data only)
       const base64Images = await Promise.all(
