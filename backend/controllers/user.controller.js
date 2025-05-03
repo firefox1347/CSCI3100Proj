@@ -144,7 +144,9 @@ export const getFollowStatus = async (req, res, next) => {
     const userId = req.user.id;
 
     // Check if target user exists
-    const targetUser = await Users.findById(target);
+    const targetUser = await Users.findById(target)
+      .populate('follower', 'username avatar_url display_name')
+      .populate('following', 'username avatar_url display_name');
     if (!targetUser) {
       return res.status(404).json({
         success: false,
@@ -172,7 +174,7 @@ export const getFollowStatus = async (req, res, next) => {
     res.status(200).json({
       success: true,
       isFollowing,
-      followersList,
+      followersList, 
       followingList,
       numberOfFollowers: followersList.length,
       numberOfFollowing: followingList.length,

@@ -5,11 +5,15 @@ import toast from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 import { set } from "mongoose";
 import EditProfile from "./EditProfile";
+import { FollowModal } from '../layout/FollowModal';
 
 const ProfileHeader = (userProfile) => {
   //console.log(userProfile.profileData.profile.username);
   const [editing, setEditing] = useState(false);
   const [editedData, setEditedData] = useState({});
+
+  
+
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({
@@ -60,6 +64,13 @@ const ProfileHeader = (userProfile) => {
   const numberOfFollowers = followStatus?.numberOfFollowers;
   const numberOfFollowing = followStatus?.numberOfFollowing;
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState('followers');
+  const followers = followStatus?.followersList || [];
+  const following = followStatus?.followingList || [];
+
+  console.log(following, followers);
+
   const handleFollow = (targetId) => {
     if (isFollowing) {
       unfollow.mutate(targetId);
@@ -67,48 +78,16 @@ const ProfileHeader = (userProfile) => {
       follow.mutate(targetId);
     }
   };
-  // const { data : connectionStauts, refetch: refetchConnectionStatus } = useQuery({
-  //     queryKey: ["connectionStatus", userData._id],
-  //     queryFn: () => axiosInstance.get(`/connections/status/${userData._id} `),
-  //     enabled: !isSelfProfile,
-  // });
+  
+  const handleFollowersClick = () => {
+    setModalType('followers');
+    setModalOpen(true);
+  };
 
-  // const isConnected = userData.connections.some((connection) => connection._id === authUser._id);
-  // const { mutate: sendConnectionRequest } = useMutation({
-  // 	mutationFn: (userId) => axiosInstance.post(`/connections/request/${userId}`),
-  // 	onSuccess: () => {
-  // 		toast.success("Connection request sent");
-  // 		refetchConnectionStatus();
-  // 		queryClient.invalidateQueries(["connectionRequests"]);
-  // 	},
-  // 	onError: (error) => {
-  // 		toast.error(error.response?.data?.message || "An error occurred");
-  // 	},
-  // });
-
-  // const { mutate: acceptRequest } = useMutation({
-  // 	mutationFn: (requestId) => axiosInstance.put(`/connections/accept/${requestId}`),
-  // 	onSuccess: () => {
-  // 		toast.success("Connection request accepted");
-  // 		refetchConnectionStatus();
-  // 		queryClient.invalidateQueries(["connectionRequests"]);
-  // 	},
-  // 	onError: (error) => {
-  // 		toast.error(error.response?.data?.message || "An error occurred");
-  // 	},
-  // });
-
-  // const { mutate: rejectRequest } = useMutation({
-  // 	mutationFn: (requestId) => axiosInstance.put(`/connections/reject/${requestId}`),
-  // 	onSuccess: () => {
-  // 		toast.success("Connection request rejected");
-  // 		refetchConnectionStatus();
-  // 		queryClient.invalidateQueries(["connectionRequests"]);
-  // 	},
-  // 	onError: (error) => {
-  // 		toast.error(error.response?.data?.message || "An error occurred");
-  // 	},
-  // });
+  const handleFollowingClick = () => {
+    setModalType('following');
+    setModalOpen(true);
+  };
 
   const handleEdit = () => {
     if (userProfile.isSelfProfile) {
@@ -171,10 +150,12 @@ const ProfileHeader = (userProfile) => {
               <div className="text-center font-bold mr-6 mb-3 text-[1.1vw]">
                 0 Post
               </div>
-              <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
+              <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]"
+              onClick={handleFollowersClick}>
                 {numberOfFollowers} Followers
               </div>
-              <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]">
+              <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]"
+              onClick={handleFollowingClick}>
                 {numberOfFollowing} Following
               </div>
             </div>
@@ -190,6 +171,12 @@ const ProfileHeader = (userProfile) => {
         </div>
         <div class="flex flex-col p-1 sm:p-2 max-w-full mx-auto border-t border-white border-opacity-30"></div>
       </div>
+      <FollowModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalType === 'followers' ? 'Followers' : 'Following'}
+        users={modalType === 'followers' ? followers : following}
+      />
     </>
   );
 };

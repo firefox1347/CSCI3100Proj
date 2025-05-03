@@ -11,7 +11,7 @@ const ProfileTabs = () => {
             </span>
             </div>
 
-            <div class="flex items-center py-3 px-3 gap-1 cursor-pointer">
+            {/* <div class="flex items-center py-3 px-3 gap-1 cursor-pointer">
             <div class="text-2xl">
                 <BsBookmark />
             </div>
@@ -27,7 +27,7 @@ const ProfileTabs = () => {
             <span class="text-xs hidden sm:block">
                 Likes
             </span>
-            </div>
+            </div> */}
     </div>
   )
 }
