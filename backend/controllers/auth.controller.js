@@ -6,6 +6,7 @@ import crypto from "crypto";
 import passwordCheck from "../utils/passwordCheck.js";
 import genderCheck from "../utils/genderCheck.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
+import emailSender from '../utils/emailSender.js';
 
 export const signup = async (req, res, next) => {
   try {
@@ -88,11 +89,11 @@ export const signup = async (req, res, next) => {
     res.status(201).json({ success: true, message: "Register Sucessfully" });
 
     //sending verification email, todo: to be implemented @ppc
-    // try {
-    //     await sendVerificationEmail(user.email, user.name);
-    // } catch (emailError) {
-    //     console.error("Error sending welcome Email",emailError);
-    // }
+    try {
+            await sendEmail(newUser.email, newUser.name, token, "verify")
+        } catch (error) {
+            console.error("Error sending verification email", error);
+        }
   } catch (error) {
     console.log(error); // for debugging
     res.status(500).send({ success: false, message: "Internal Server Error" }); // for production
@@ -184,18 +185,20 @@ export const forgotPassword = async (req, res, next) => {
       message: "Password reset email is sent to your email",
     });
     try {
-      //todo: send email @ppc
-    } catch (errorEmail) {
+      const URL = process.env.FRONTEND + "/api/v1/auth/" + reset_pw_token;
+      await sendEmail(user.email, user.name, URL, "forgotPW");
+     } catch (error) {
       console.error("Error in forgotPassword sending email", error.message);
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
     }
+
   } catch (error) {
-    console.error("error in forgotPassword", error.message);
-    res
-      .status(500)
-      .json({ success: false, message: "Oops! something went wrong" });
+        console.error("error in forgotPassword", error.message);
+        res
+        .status(500)
+        .json({ success: false, message: "Oops! something went wrong" });
   }
 };
 
@@ -259,6 +262,7 @@ export const resetPassword = async (req, res, next) => {
     user.reset_pw_token = null;
     user.reset_pw_token_expires_at = null;
     await user.save();
+    await sendEmail(user.email, user.name, "", "resetSuccess");
     res
       .status(200)
       .json({ success: true, message: "Password reset successfully" });
