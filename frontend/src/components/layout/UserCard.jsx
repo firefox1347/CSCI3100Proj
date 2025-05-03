@@ -30,7 +30,7 @@ const UserCard = ({ userid }) => {
           className="flex items-center space-x-3 w-full"
         >
           <img
-            src={userInfo.avatar || "/default-avatar.png"}
+            src={userInfo.avatar || "../../../public/default-avatar.jpg"}
             alt={displayName}
             className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
           />

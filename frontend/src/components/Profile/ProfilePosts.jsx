@@ -38,7 +38,7 @@ export const ProfilePosts = ({ username, isSelfProfile }) => {
   if (isLoading) return <div>Loading posts...</div>;
 
   return (
-    <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 p-4">
+    <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-1 p-4">
       {userPosts?.map((post) => (
         post.images?.length > 0 && (
           <div 
