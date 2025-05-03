@@ -16,8 +16,10 @@ export const getPostOwner = async (req, res, next) => {
         .json({ success: false, message: "Oops! User not found" });
     }
     const postOwner = {
+      name: user.username,
       username: user.display_name ? user.display_name : user.username,
       avatar: user.avatar_url,
+      userid: user._id,
     };
     res.status(200).json({ success: true, postOwner: postOwner });
   } catch (error) {}

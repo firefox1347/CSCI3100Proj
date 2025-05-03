@@ -13,10 +13,12 @@ const FeedPost = ({ postid, img, userid, content }) => {
     }, // Only run the query if userid is available
   });
   if (isLoading) return null;
+  console.log(postOwner);
+
 
   return (
     <>
-      <PostHeader username={postOwner.username} avatar={postOwner.avatar} />
+      <PostHeader name={postOwner.name} username={postOwner.username} avatar={postOwner.avatar} userid={postOwner.userid} />
       <Box sx={{ my: 2, borderRadius: 4, overflow: "hidden" }}>
         {img && (
           <img
