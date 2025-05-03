@@ -202,6 +202,8 @@ export const getFollowStatusById = async (req, res, next) => {
     const followersList = targetUser.follower;
     const followingList = targetUser.following;
 
+    const followingListForSave = targetUser.following;
+
     const getRandomSubset = (array, n) => {
       const shuffled = array.sort(() => 0.5 - Math.random());
       return shuffled.slice(0, n);
@@ -274,7 +276,8 @@ export const getFollowStatusById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      largestThree: largestThree
+      largestThree: largestThree,
+      followingList: followingListForSave
     });
   } catch (error) {
     console.error("Error fetching follow status:", error);

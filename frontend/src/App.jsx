@@ -3,6 +3,7 @@ import Layout from "./components/layout/Layout";
 import SignUpPage from "./pages/authentication/SignUpPage";
 import LoginPage from "./pages/authentication/LoginPage";
 import HomePage from "./pages/HomePage";
+import FriendPage from "./pages/FriendPage";
 import toast, { Toaster } from "react-hot-toast";
 import { axiosInstance } from "./lib/axios";
 import { useQuery } from "@tanstack/react-query";
@@ -56,6 +57,10 @@ function App() {
 		    <Route
           path={`/profile/:username/edit`}
           element={authUser ? <EditProfile /> : <Navigate to="/login" />}
+        />
+		    <Route
+          path="/friend"
+          element={authUser ? <FriendPage /> : <Navigate to="/login" />}
         />
       </Routes>
       <Toaster />
