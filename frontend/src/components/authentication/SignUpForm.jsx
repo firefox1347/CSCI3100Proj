@@ -27,7 +27,7 @@ const SignUpForm = () => {
     })
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(password.length <= 8){
+        if(password.length < 8){
             toast.error("password must be at least 8 characters");
         }
         else if(!(/[A-Z]/.test(password))){
