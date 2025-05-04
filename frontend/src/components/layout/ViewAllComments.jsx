@@ -29,6 +29,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
       const res = await axiosInstance.get("/auth/me");
       return res.data;
     },
+    enabled: open
   });
 
   // Fetch Comments
@@ -42,6 +43,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
       const res = await axiosInstance.get(`/comments/post/${postid}`);
       return res.data.comments;
     },
+    enabled: open
   });
 
   // Debug Function
@@ -126,7 +128,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
     }
   };
 
-  // 5. Toggle replies visibility
+  // Toggle replies visibility
   const toggleReplies = (commentId) => {
     setShowReplies((prev) => ({
       ...prev,
@@ -196,6 +198,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          color: "black",
         }}
       >
         {/* Header */}
