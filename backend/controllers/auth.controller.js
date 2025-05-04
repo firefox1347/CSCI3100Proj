@@ -6,7 +6,7 @@ import crypto from "crypto";
 import passwordCheck from "../utils/passwordCheck.js";
 import genderCheck from "../utils/genderCheck.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import emailSender from '../utils/emailSender.js';
+import sendEmail from '../utils/emailSender.js';
 
 export const signup = async (req, res, next) => {
   try {
@@ -185,8 +185,9 @@ export const forgotPassword = async (req, res, next) => {
       message: "Password reset email is sent to your email",
     });
     try {
+      //URL is not functioning
       const URL = process.env.FRONTEND + "/api/v1/auth/" + reset_pw_token;
-      await sendEmail(user.email, user.name, URL, "forgotPW");
+      await sendEmail(user.email, user.username, URL, "forgotPW");
      } catch (error) {
       console.error("Error in forgotPassword sending email", error.message);
       res
