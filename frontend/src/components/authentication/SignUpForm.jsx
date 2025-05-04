@@ -27,6 +27,18 @@ const SignUpForm = () => {
     })
     const handleSubmit = (e) => {
         e.preventDefault();
+        if(password.length <= 8){
+            toast.error("password must be at least 8 characters");
+        }
+        else if(!(/[A-Z]/.test(password))){
+            toast.error("there must be at least one uppercase letter");
+        }
+        else if(!(/[a-z]/.test(password))){
+            toast.error("there must be at least one lowercase letter");
+        }
+        else if(!(/[0-9]/.test(password))){
+            toast.error("there must be at least one number");
+        }
         signupMutation({username , email, password, dob, gender});
     }
 
