@@ -264,7 +264,7 @@ export const resetPassword = async (req, res, next) => {
     user.reset_pw_token = null;
     user.reset_pw_token_expires_at = null;
     await user.save();
-    await sendEmail(user.email, user.usernamename, "", "resetSuccess");
+    await sendEmail(user.email, user.username, "", "resetSuccess");
     res
       .status(200)
       .json({ success: true, message: "Password reset successfully" });
