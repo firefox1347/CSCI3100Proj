@@ -37,12 +37,20 @@ const postCommentSchema = new mongoose.Schema({
         noOfLikes: {
             type: Number,
             default: 0
-        }
+        },
+        deleted: {
+            type: Boolean,
+            default: false
+        },
     }],
     noOfSubComment: {
         type: Number,
         default: 0
-    }
+    },
+    deleted: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const PostComment = mongoose.model("PostComment", postCommentSchema);
