@@ -186,8 +186,9 @@ export const forgotPassword = async (req, res, next) => {
     });
     try {
       //URL is not functioning
-      const URL = process.env.FRONTEND + "/api/v1/auth/" + reset_pw_token;
+      const URL = process.env.FRONTEND + "/resetpassword/" + reset_pw_token;
       await sendEmail(user.email, user.username, URL, "forgotPW");
+      // console.log("Sent email" + user.email + " " + user.username + " " + URL);
      } catch (error) {
       console.error("Error in forgotPassword sending email", error.message);
       res
@@ -263,7 +264,7 @@ export const resetPassword = async (req, res, next) => {
     user.reset_pw_token = null;
     user.reset_pw_token_expires_at = null;
     await user.save();
-    await sendEmail(user.email, user.name, "", "resetSuccess");
+    await sendEmail(user.email, user.usernamename, "", "resetSuccess");
     res
       .status(200)
       .json({ success: true, message: "Password reset successfully" });

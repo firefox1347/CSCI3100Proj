@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import SignUpPage from "./pages/authentication/SignUpPage";
 import LoginPage from "./pages/authentication/LoginPage";
+import ResetPasswordPage from "./pages/authentication/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import FriendPage from "./pages/FriendPage";
 import toast, { Toaster } from "react-hot-toast";
@@ -62,6 +63,9 @@ function App() {
           path="/friend"
           element={authUser ? <FriendPage /> : <Navigate to="/login" />}
         />
+        <Route
+          path="/resetpassword/:reset_pw_token"
+          element={<ResetPasswordPage />} />
       </Routes>
       <Toaster />
     </Layout>
