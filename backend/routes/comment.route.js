@@ -7,17 +7,17 @@ import {
   createSubComment,
   likeSubComment,
 } from '../controllers/comment.controller.js';
-
+import { muteCheck } from '../middleware/muted.middleware.js';
 const router = express.Router();
 
 // GET
 router.get('/post/:postid', protectRoute, getPostComments);
 
 // POST
-router.post('/post/:postid', protectRoute, createComment);
+router.post('/post/:postid', protectRoute, muteCheck, createComment);
 
 // POST
-router.post('/:commentid/reply', protectRoute, createSubComment);
+router.post('/:commentid/reply', protectRoute, muteCheck, createSubComment);
 
 // PUT
 router.put('/:commentid/like', protectRoute, likeComment);

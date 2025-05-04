@@ -3,10 +3,13 @@ import User from "../models/user.model.js";
 import PostComment from "../models/postcomment.model.js";
 
 export const getPostComments = async (req, res) => {
+  //to change1
     try {
-      const post = await Post.findById(req.params.postid)
+      const post = await Post.findById(req.params.postid).select("content _id comments")
         .populate({
             path: 'comments',
+            match: { deleted: {$ne: true} }, 
+            options: { retainNullValues: false },
             populate: [
               {
                 path: 'author',
@@ -15,20 +18,48 @@ export const getPostComments = async (req, res) => {
               {
                 path: 'subComment.author',
                 select: 'username',
+                // match: { deleted: {$ne: true} }, 
+                // options: { retainNullValues: false },
               },
-            ],
+              
+            ],              
+            // transform: (doc) => {
+            //   if (doc) {
+            //     // Filter out deleted subcomments
+            //     doc.subComment = doc.subComment.filter(sub => !sub.deleted);
+            //     // Populate subComment.author after filtering (if necessary)
+            //     // Note: Mongoose doesn't support populating in transform, so pre-filter and then populate
+            //     return doc;
+            //   }
+            //   return null;
+            // },
           });
-    
+
+          const filteredComments = post.comments.map(comment => {
+            const filteredSubComments = comment.subComment.filter(sub => !sub.deleted);
+            return {
+              _id: comment._id,
+              author: comment.author,
+              content: comment.content,
+              likes: comment.likes,
+              noOfLikes: comment.noOfLikes,
+              noOfSubComment: comment.noOfSubComment,
+              __v: comment.__v,
+              deleted: comment.deleted,
+              subComment: filteredSubComments,
+            };
+          });
+
       if (!post) {
         return res.status(404).json({
           success: false,
           message: "Post not found"
         });
       }
-  
       res.status(200).json({
         success: true,
-        comments: post.comments
+        //comments: post.comments,
+        comments: filteredComments,
       });
     } catch (error) {
       res.status(500).json({
@@ -70,6 +101,7 @@ export const createComment = async (req, res) => {
 
 export const createSubComment = async (req, res) => {
     try {
+      console.log("temp createSubComment");
       const commendid = req.params.commentid;
       const text = req.body.content;
       
@@ -150,6 +182,7 @@ export const likeComment = async (req, res) => {
 
 export const likeSubComment = async (req,res) => {
     try {  
+        console.log("temp likeSubComment");
         const comment = await PostComment.findById(req.params.commentid);
         const subcommentid = req.params.subcommentid;
         const userId = req.user._id;
@@ -206,3 +239,4 @@ export const deleteComment = async (req,res,next) => {
 export const deleteSubComment = async (req,res,next) => {
 
 }
+

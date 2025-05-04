@@ -6,6 +6,8 @@ import profileRoutes from "./routes/profile.route.js";
 import userRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
+import adminRoutes from "./routes/admin.route.js";
+import reportRoutes from "./routes/report.route.js"
 import { connectDB } from "./lib/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -28,7 +30,8 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/user", userRoutes);
-
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/report", reportRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   connectDB();

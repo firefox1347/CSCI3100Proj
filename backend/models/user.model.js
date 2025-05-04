@@ -72,7 +72,15 @@ const userSchema = new mongoose.Schema(
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     dm: [{ type: mongoose.Schema.Types.ObjectId, ref: "Dm" }],
     post_collection: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}],
-    likePost: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}]
+    likePost: [{type: mongoose.Schema.Types.ObjectId, ref: "Post"}],
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    deleted: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );
