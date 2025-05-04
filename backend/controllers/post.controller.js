@@ -197,6 +197,12 @@ export const getOnePost = async (req, res, next) => {
         .status(404)
         .json({ success: false, message: "that page don't exists" });
     }
+    //deleted 
+    // if (onePost.deleted) {
+    //   res
+    //     .status(404)
+    //     .json({ success: false, message: "that page don't exists" });
+    // }
     res.status(200).json({ success: true, post: onePost });
   } catch (error) {
     console.error("Error in getOnePost", error.message);
@@ -210,7 +216,7 @@ export const getMyPost = async (req, res, next) => {
   try {
     //to do: offset and limit
     const userID = req.user._id;
-    const myPostList = await Post.find({ author: userID })
+    const myPostList = await Post.find({ $and: [{ author: userID }, {deleted: {$ne: true}}]})
       .sort({ createdAt: -1 }) // sort newest first
       .populate('author', 'username avatar_url');
     res.status(200).json({ success: true, posts: myPostList });
@@ -224,10 +230,10 @@ export const getMyPost = async (req, res, next) => {
 
 export const getAllPost = async (req, res, next) => {
   try {
-    const PostList = await Post.find({});
+    const PostList = await Post.find({deleted: {$ne: true}});
     res.status(200).json({ success: true, posts: PostList });
   } catch (error) {
-    console.error("Error in getMyPost", error.message);
+    console.error("Error in getAllPost", error.message);
     res
       .status(500)
       .json({ success: false, message: "Oops something went wrong" });
@@ -239,6 +245,7 @@ export const getSomePost = async (req, res, next) => {
     //to do: offset and limit
     const userID = req.user._id;
     //to do: filter top limit post for usre using recommedation algo
+    res.status(200).json({success: true, message: "Theres nothing here yet"});
   } catch (error) {
     console.error("Error in getSomePost", error.message);
     res
@@ -260,15 +267,16 @@ export const deletePost = async (req, res, next) => {
         .json({ success: false, message: "Oops, Post not found!" });
     }
     // console.log(user.toString());
-    // console.log(post.author.toString())
+    // console.log(post.author.toString()) 
     if (user.toString() !== post.author.toString()) {
       return res
         .status(403)
         .json({ success: false, message: "Not authorized" });
     }
-
-    await Post.findByIdAndDelete(postId);
-
+    // delete 
+    post.deleted = true;
+    // await Post.findByIdAndDelete(postId);
+    await post.save();
     res.status(201).json({ success: true, message: "Post deleted!" });
   } catch (error) {
     console.error("Error in deletePost", error.message);
@@ -315,7 +323,6 @@ export const updatePost = async (req, res, next) => {
 export const getTargetPost = async (req, res, next) => {
   try {
     const targetUserId = req.params.userid;
-    
     // Verify target user exists
     const targetUser = await User.findById(targetUserId);
     if (!targetUser) {
@@ -325,7 +332,7 @@ export const getTargetPost = async (req, res, next) => {
       });
     }
 
-    const targetPosts = await Post.find({ author: targetUserId })
+    const targetPosts = await Post.find({ $and: [{author: targetUserId}, {deleted: {$ne: true}}] })
       .populate('author', 'username avatar_url')
       .sort({ createdAt: -1 });
 
