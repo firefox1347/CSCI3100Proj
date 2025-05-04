@@ -23,6 +23,7 @@ export const updateProfile = async (req, res, next) => {
     if (dob) profile.dob = dob;
     if (gender) profile.gender = gender;
     if (bio) profile.bio = bio;
+    if(bio == "^&*") profile.bio = "";
 
     await user.save();
     await profile.save();

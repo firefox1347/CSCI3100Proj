@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../../lib/axios";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const EditProfile = () => {
   const [gender, setGender] = useState("");
@@ -91,6 +92,11 @@ const fileInputRef = useRef(null);
     }
   };
 
+
+  const handleResetBio = () => {
+    updateProfile({ bio: "^&*" });
+  };
+
   return (
     <>
       <div className="flexitems-center mb-5">
@@ -134,22 +140,27 @@ const fileInputRef = useRef(null);
             </button>
           )}
         </div>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current.click()}
-          className="text-blue-500 text-sm"
-        >
-          {avatar ? "Change Avatar" : "Upload Avatar"}
-        </button>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current.click()}
+            className="text-blue-500 text-sm"
+          >
+            {avatar ? "Change Avatar" : "Upload Avatar"}
+          </button> 
+             
       </div>
 
-        <input
-          type="text"
-          placeholder={"display name"}
-          value={display_name}
-          onChange={(e) => setDisplayName(e.target.value)}
-          className="input input-bordered w-full"
-        />
+      
+
+      <div className="relative">
+          <input
+            type="text"
+            placeholder="Display name"
+            value={display_name}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className="input input-bordered w-full pr-16"
+          />
+      </div>
         <input
           type="date"
           placeholder="Date of birth (YYYY-MM-DD)"
@@ -167,14 +178,23 @@ const fileInputRef = useRef(null);
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
+        <div className="relative">
         <textarea
-          type="text"
           placeholder="Bio"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          className="input input-bordered w-full"
-          style={{ display: "block" }}
+          className="textarea textarea-bordered w-full pr-20"
+          rows="4"
         />
+        <button
+          type="button"
+          onClick={handleResetBio}
+          className="absolute right-2 top-2 btn btn-xs btn-ghost z-10"
+        >
+          Clear bio
+        </button>
+      </div>
+
         <span></span>
         <button
           type="submit"
