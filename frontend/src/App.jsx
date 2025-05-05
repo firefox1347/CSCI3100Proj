@@ -5,6 +5,7 @@ import LoginPage from "./pages/authentication/LoginPage";
 import ResetPasswordPage from "./pages/authentication/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import FriendPage from "./pages/FriendPage";
+import AdminPage from "./pages/AdminPage";
 import toast, { Toaster } from "react-hot-toast";
 import { axiosInstance } from "./lib/axios";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +19,6 @@ function App() {
     queryFn: async () => {
       try {
         const res = await axiosInstance.get("/auth/me");
-        //console.log(res.data);
         return res.data;
       } catch (err) {
         if (err.response && err.response.status === 401) {
@@ -42,6 +42,10 @@ function App() {
         <Route
           path="/"
           element={authUser ? <HomePage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/admin"
+          element={authUser?.isAdmin ? <AdminPage /> : <Navigate to={"/"} />}
         />
         <Route
           path="/signup"

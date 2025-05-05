@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import PeopleIcon from "@mui/icons-material/People";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import SearchBar from "./SearchBar";
 
 const Navbar = () => {
@@ -80,6 +81,20 @@ const Navbar = () => {
                 className="text-white hover:text-blue-500"
               />
             </Link>
+            {
+              authUser?.isAdmin && (
+                <Link
+                  to={`/admin`}
+                  title="adminpage"
+                >
+                  <AdminPanelSettingsIcon
+                    fontSize="large"
+                    className="text-white hover:text-blue-500"
+                  />
+                </Link>
+              )
+            }
+
           </div>
           <div className="flex space-x-4">
             <button
