@@ -29,7 +29,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
       const res = await axiosInstance.get("/auth/me");
       return res.data;
     },
-    enabled: open
+    enabled: open,
   });
 
   // Fetch Comments
@@ -43,7 +43,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
       const res = await axiosInstance.get(`/comments/post/${postid}`);
       return res.data.comments;
     },
-    enabled: open
+    enabled: open,
   });
 
   // Debug Function

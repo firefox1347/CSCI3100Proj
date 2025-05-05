@@ -3,15 +3,17 @@ import { useState } from "react";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import OutlinedFlagIcon from "@mui/icons-material/OutlinedFlag";
 import toast from "react-hot-toast";
 import ViewAllComments from "./ViewAllComments";
-import { createComment } from "./commentHandle";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
 
 const PostFooter = ({ username, content, postid }) => {
   const queryClient = useQueryClient();
   const [viewCommentsOpen, setViewCommentsOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const { data: currentUser } = useQuery({
     queryKey: ["currentUser"],
@@ -62,6 +64,13 @@ const PostFooter = ({ username, content, postid }) => {
         <IconButton size="small" onClick={() => setViewCommentsOpen(true)}>
           <ChatBubbleOutlineIcon />
         </IconButton>
+        <IconButton
+          size="small"
+          sx={{ marginLeft: "auto" }}
+          onClick={() => setReportOpen(true)}
+        >
+          <OutlinedFlagIcon />
+        </IconButton>
       </Box>
 
       {/* Likes count */}
@@ -82,6 +91,12 @@ const PostFooter = ({ username, content, postid }) => {
       <ViewAllComments
         open={viewCommentsOpen}
         onClose={() => setViewCommentsOpen(false)}
+        postid={postid}
+      />
+
+      <ReportCard
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
         postid={postid}
       />
     </Box>
