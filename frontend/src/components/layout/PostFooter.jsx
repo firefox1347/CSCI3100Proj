@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import ViewAllComments from "./ViewAllComments";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "../../lib/axios";
-
+import ReportCard from "./ReportCard";
 const PostFooter = ({ username, content, postid }) => {
   const queryClient = useQueryClient();
   const [viewCommentsOpen, setViewCommentsOpen] = useState(false);
@@ -71,6 +71,7 @@ const PostFooter = ({ username, content, postid }) => {
         >
           <OutlinedFlagIcon />
         </IconButton>
+
       </Box>
 
       {/* Likes count */}
@@ -93,12 +94,12 @@ const PostFooter = ({ username, content, postid }) => {
         onClose={() => setViewCommentsOpen(false)}
         postid={postid}
       />
-
       <ReportCard
         open={reportOpen}
         onClose={() => setReportOpen(false)}
         postid={postid}
       />
+
     </Box>
   );
 };

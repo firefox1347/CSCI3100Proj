@@ -17,7 +17,7 @@ import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
 import { set } from "mongoose";
 
-const ReportCard = ({ open, onClose, postid }) => {
+const ReportCommentCard = ({ open, onClose, commentid }) => {
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -37,7 +37,7 @@ const ReportCard = ({ open, onClose, postid }) => {
       const body = {
         reason: reason,
       };
-      const response = await axiosInstance.post(`/report/reportPost/${postid}`, body);
+      const response = await axiosInstance.post(`/report/reportComment/${commentid}`, body);
 
       if (response.data.success) {
         setSuccess(true);
@@ -85,4 +85,4 @@ const ReportCard = ({ open, onClose, postid }) => {
   );
 };
 
-export default ReportCard;
+export default ReportCommentCard;
