@@ -85,7 +85,7 @@ const Navbar = () => {
               authUser?.isAdmin && (
                 <Link
                   to={`/admin`}
-                  title="adminpage"
+                  title="Adminpage"
                 >
                   <AdminPanelSettingsIcon
                     fontSize="large"
