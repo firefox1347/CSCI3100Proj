@@ -51,7 +51,28 @@ const ReportCard = ({ open, onClose, postid }) => {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+          color: "black",
+        }}
+      >
+      <form 
+        onSubmit={(e) => {
+          handleSubmit(e);
+          setReason("");
+          onClose();
+        }} 
+        className="space-y-6"
+      >
         <div>
           <label
             htmlFor="reason"
@@ -66,7 +87,7 @@ const ReportCard = ({ open, onClose, postid }) => {
               required
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
             />
           </div>
         </div>
@@ -81,6 +102,7 @@ const ReportCard = ({ open, onClose, postid }) => {
           </button>
         </div>
       </form>
+      </Box>
     </Modal>
   );
 };
