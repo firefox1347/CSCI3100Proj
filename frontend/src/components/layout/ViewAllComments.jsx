@@ -15,11 +15,17 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
+import ReportCommentCard from "./ReportCommentCard";
+import ReportSubCommentCard from "./ReportSubCommentCard";
+import OutlinedFlagIcon from "@mui/icons-material/OutlinedFlag";
 
 const ViewAllComments = ({ open, onClose, postid }) => {
   const [newComment, setNewComment] = useState("");
   const [showReplies, setShowReplies] = useState({});
   const [replyingTo, setReplyingTo] = useState(null);
+  const [commentReportOpen, setCommentReportOpen] = useState(false);
+  const [subCommentReportOpen, setSubCommentReportOpen] = useState(false);
+
   const queryClient = useQueryClient();
 
   // Fetch user
@@ -260,7 +266,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
 
                   {/* Like count */}
                   <Typography variant="caption">{comment.noOfLikes}</Typography>
-
+                  
                   {/* Reply button */}
                   <IconButton size="small">
                     <ReplyIcon
@@ -270,7 +276,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                       }
                     />
                   </IconButton>
-
+                  
                   {comment.noOfSubComment > 0 && (
                     <Button
                       variant="text"
@@ -282,6 +288,19 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                       {comment.noOfSubComment === 1 ? "reply" : "replies"}
                     </Button>
                   )}
+                  <IconButton
+                    size="small"
+                    sx={{ marginLeft: "auto" }}
+                    onClick={() => setCommentReportOpen(true)}
+                  >
+                    <OutlinedFlagIcon />
+                  </IconButton>
+                  <ReportCommentCard
+                    open={commentReportOpen}
+                    onClose={() => setCommentReportOpen(false)}
+                    commentid={comment._id}
+                  />
+
                 </Box>
 
                 {/* Subcomments */}
@@ -327,6 +346,19 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                         <Typography variant="caption">
                           {sub.noOfLikes}
                         </Typography>
+                        <IconButton
+                          size="small"
+                          sx={{ marginLeft: "auto" }}
+                          onClick={() => setSubCommentReportOpen(true)}
+                        >
+                          <OutlinedFlagIcon />
+                        </IconButton>
+                        <ReportSubCommentCard
+                          open={subCommentReportOpen}
+                          onClose={() => setSubCommentReportOpen(false)}
+                          commentid={comment._id}
+                          subcommentid={sub._id}
+                        />
                       </Box>
                     </Box>
                   ))}

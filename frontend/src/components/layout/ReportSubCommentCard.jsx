@@ -17,7 +17,7 @@ import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
 import { set } from "mongoose";
 
-const ReportCommentCard = ({ open, onClose, commentid, subcommentid }) => {
+const ReportSubCommentCard = ({ open, onClose, commentid, subcommentid }) => {
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -85,4 +85,4 @@ const ReportCommentCard = ({ open, onClose, commentid, subcommentid }) => {
   );
 };
 
-export default ReportCommentCard;
+export default ReportSubCommentCard;
