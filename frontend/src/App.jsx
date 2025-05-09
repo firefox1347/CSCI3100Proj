@@ -6,6 +6,7 @@ import ResetPasswordPage from "./pages/authentication/ResetPasswordPage";
 import HomePage from "./pages/HomePage";
 import FriendPage from "./pages/FriendPage";
 import AdminPage from "./pages/AdminPage";
+import VerifyEmailPage from "./pages/authentication/VerifyEmailPage"
 import toast, { Toaster } from "react-hot-toast";
 import { axiosInstance } from "./lib/axios";
 import { useQuery } from "@tanstack/react-query";
@@ -70,6 +71,9 @@ function App() {
         <Route
           path="/resetpassword/:reset_pw_token"
           element={<ResetPasswordPage />} />
+        <Route
+          path="/verify-email"
+          element={<VerifyEmailPage />} />
       </Routes>
       <Toaster />
     </Layout>
