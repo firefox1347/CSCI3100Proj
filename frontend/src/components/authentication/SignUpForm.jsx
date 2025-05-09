@@ -19,7 +19,9 @@ const SignUpForm = () => {
             return res.data;
         },
         onSuccess:() => {
-            toast.success("Account created successfully");
+            toast.success("A verification email has been sent. Please check your inbox to verify your email.", {
+                autoClose: 10000
+              });
         },
         onError:(err) => {
             toast.error("Something went wrong :\n" + err.response.data.message);
