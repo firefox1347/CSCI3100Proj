@@ -76,22 +76,22 @@ export const likePost = async (req, res, next) => {
               $cond: [
                 { $in: [currentUser, "$likes"] }, //If user in likes
                 { $setDifference: ["$likes", [currentUser]] }, // Remove user
-                { $concatArrays: ["$likes", [currentUser]] }    // Add user
-              ]
+                { $concatArrays: ["$likes", [currentUser]] }, // Add user
+              ],
             },
             noOfLikes: {
               $cond: [
-                { $in: [currentUser, "$likes"] },  //If user in likes
-                { $subtract: ["$noOfLikes", 1] },  // Decrement
-                { $add: ["$noOfLikes", 1] }        // Increment
-              ]
-            }
-          }
-        }
+                { $in: [currentUser, "$likes"] }, //If user in likes
+                { $subtract: ["$noOfLikes", 1] }, // Decrement
+                { $add: ["$noOfLikes", 1] }, // Increment
+              ],
+            },
+          },
+        },
       ],
       { new: true }
     );
-    
+
     const user = await User.findByIdAndUpdate(
       currentUser,
       [
@@ -101,27 +101,26 @@ export const likePost = async (req, res, next) => {
               $cond: [
                 { $in: [postid, "$likePost"] },
                 { $setDifference: ["$likePost", [postid]] },
-                { $concatArrays: ["$likePost", [postid]] }
-              ]
-            }
-          }
-        }
+                { $concatArrays: ["$likePost", [postid]] },
+              ],
+            },
+          },
+        },
       ],
-      { new: true}
+      { new: true }
     );
 
     if (!updatedPost) {
       return res.status(404).json({
         success: false,
-        message: "Post not found"
+        message: "Post not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      post: updatedPost
+      post: updatedPost,
     });
-
   } catch (error) {
     console.error("Error in likePost", error.message);
     res
@@ -135,11 +134,14 @@ export const commentPost = async (req, res) => {
     const { content } = req.body;
     const postId = req.params.postid;
     const author = req.user._id;
-    const populatedComment = await PostComment.findById(newComment._id)
-      .populate('author', 'username');
+    const populatedComment = await PostComment.findById(
+      newComment._id
+    ).populate("author", "username");
 
     if (!content?.trim()) {
-      return res.status(400).json({ success: false, message: "Comment cannot be empty" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Comment cannot be empty" });
     }
 
     const newComment = await PostComment.create({
@@ -151,53 +153,51 @@ export const commentPost = async (req, res) => {
     // Update parent post's comment count
     await Post.findByIdAndUpdate(postId, {
       $push: { comments: newComment._id },
-      $inc: { noOfComments: 1 }
+      $inc: { noOfComments: 1 },
     });
 
     res.status(201).json({
       success: true,
       message: "Comment posted successfully",
-      comment: populatedComment
+      comment: populatedComment,
     });
-
   } catch (error) {
     console.error("Comment error:", error);
     res.status(500).json({
       success: false,
-      message: error.message + "Failed to post comment"
+      message: error.message + "Failed to post comment",
     });
   }
 };
-
 
 export const getOnePost = async (req, res, next) => {
   try {
     const postid = req.params.postid;
     let onePost = await Post.findById(postid)
-    .populate({
-      path: 'author',
-      select: 'username avatar_url',
-      model: 'User'
-    })
-    .populate({
-      path: 'comments',
-      populate: [
-        {
-          path: 'author',
-          select: 'username avatar_url'
-        },
-        {
-          path: 'subComment.author',
-          select: 'username avatar_url'
-        }
-      ]
-    });
+      .populate({
+        path: "author",
+        select: "username avatar_url",
+        model: "User",
+      })
+      .populate({
+        path: "comments",
+        populate: [
+          {
+            path: "author",
+            select: "username avatar_url",
+          },
+          {
+            path: "subComment.author",
+            select: "username avatar_url",
+          },
+        ],
+      });
     if (!onePost) {
       res
         .status(404)
         .json({ success: false, message: "that page don't exists" });
     }
-    //deleted 
+    //deleted
     // if (onePost.deleted) {
     //   res
     //     .status(404)
@@ -216,9 +216,11 @@ export const getMyPost = async (req, res, next) => {
   try {
     //to do: offset and limit
     const userID = req.user._id;
-    const myPostList = await Post.find({ $and: [{ author: userID }, {deleted: {$ne: true}}]})
+    const myPostList = await Post.find({
+      $and: [{ author: userID }, { deleted: { $ne: true } }],
+    })
       .sort({ createdAt: -1 }) // sort newest first
-      .populate('author', 'username avatar_url');
+      .populate("author", "username avatar_url");
     res.status(200).json({ success: true, posts: myPostList });
   } catch (error) {
     console.error("Error in getMyPost", error.message);
@@ -230,7 +232,8 @@ export const getMyPost = async (req, res, next) => {
 
 export const getAllPost = async (req, res, next) => {
   try {
-    const PostList = await Post.find({deleted: {$ne: true}});
+    const PostList = await Post.find({ deleted: { $ne: true } });
+    PostList.reverse();
     res.status(200).json({ success: true, posts: PostList });
   } catch (error) {
     console.error("Error in getAllPost", error.message);
@@ -245,7 +248,7 @@ export const getSomePost = async (req, res, next) => {
     //to do: offset and limit
     const userID = req.user._id;
     //to do: filter top limit post for usre using recommedation algo
-    res.status(200).json({success: true, message: "Theres nothing here yet"});
+    res.status(200).json({ success: true, message: "Theres nothing here yet" });
   } catch (error) {
     console.error("Error in getSomePost", error.message);
     res
@@ -267,13 +270,13 @@ export const deletePost = async (req, res, next) => {
         .json({ success: false, message: "Oops, Post not found!" });
     }
     // console.log(user.toString());
-    // console.log(post.author.toString()) 
+    // console.log(post.author.toString())
     if (user.toString() !== post.author.toString()) {
       return res
         .status(403)
         .json({ success: false, message: "Not authorized" });
     }
-    // delete 
+    // delete
     post.deleted = true;
     // await Post.findByIdAndDelete(postId);
     await post.save();
@@ -286,9 +289,9 @@ export const deletePost = async (req, res, next) => {
   }
 };
 
-export const getPostLikes = async(req, res, next) => {
+export const getPostLikes = async (req, res, next) => {
   try {
-  const postid = req.params.postid;
+    const postid = req.params.postid;
     let postLikes = await Post.findById(postid).select("likes noOfLikes");
     if (!postLikes) {
       res
@@ -302,7 +305,7 @@ export const getPostLikes = async(req, res, next) => {
       .status(500)
       .json({ success: false, message: "Oops something went wrong" });
   }
-}
+};
 
 export const savePost = async (req, res, next) => {
   try {
@@ -328,23 +331,25 @@ export const getTargetPost = async (req, res, next) => {
     if (!targetUser) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
-    const targetPosts = await Post.find({ $and: [{author: targetUserId}, {deleted: {$ne: true}}] })
-      .populate('author', 'username avatar_url')
+    const targetPosts = await Post.find({
+      $and: [{ author: targetUserId }, { deleted: { $ne: true } }],
+    })
+      .populate("author", "username avatar_url")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      posts: targetPosts
+      posts: targetPosts,
     });
   } catch (error) {
     console.error("Error in getTargetPost:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch user posts"
+      message: "Failed to fetch user posts",
     });
   }
 };

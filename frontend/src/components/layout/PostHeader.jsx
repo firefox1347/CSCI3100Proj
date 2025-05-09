@@ -56,27 +56,30 @@ const PostHeader = ({ name, username, avatar, userid }) => {
   };
 
   return (
-    <Box 
-      sx={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        width: "100%", 
-        my: 2 
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        my: 2,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         {/* Link to profile */}
         <Link to={`/profile/${name}`}>
-          <Avatar 
-            src={avatar} 
-            alt="Profile" 
+          <Avatar
+            src={avatar}
+            alt="Profile"
             sx={{ width: 32, height: 32, cursor: "pointer" }}
           />
         </Link>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           {/* Username link */}
-          <Link to={`/profile/${name}`} style={{ textDecoration: "none", color: "inherit" }}>
+          <Link
+            to={`/profile/${name}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
             <Typography variant="body2" fontWeight="bold" color="black">
               {username}
             </Typography>
@@ -97,14 +100,14 @@ const PostHeader = ({ name, username, avatar, userid }) => {
             variant="body2"
             color={isFollowing ? "text.primary" : "primary"}
             fontWeight="bold"
-            sx={{ 
+            sx={{
               cursor: "pointer",
               "&:hover": { color: "text.primary" },
-              transition: "color 0.2s"
+              transition: "color 0.2s",
             }}
             onClick={handleFollow}
           >
-            {isFollowing ? "Following" : "Follow"}
+            {isFollowing ? "Unfollow" : "Follow"}
           </Typography>
         )}
       </Box>
