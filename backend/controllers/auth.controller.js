@@ -6,19 +6,17 @@ import crypto from "crypto";
 import passwordCheck from "../utils/passwordCheck.js";
 import genderCheck from "../utils/genderCheck.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import sendEmail from '../utils/emailSender.js';
+import sendEmail from "../utils/emailSender.js";
 
 export const signup = async (req, res, next) => {
   try {
     //validations
     const { password, dob, gender, email, username } = req.body;
     if (!password || !email || !username) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "All information should be filled in",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "All information should be filled in",
+      });
     }
 
     if (!genderCheck(gender)) {
@@ -65,7 +63,7 @@ export const signup = async (req, res, next) => {
     //generate profile for created user
     const newProfile = new Profile({
       username,
-      bio: "test",
+      bio: "",
       dob,
       gender,
     });
@@ -90,10 +88,10 @@ export const signup = async (req, res, next) => {
 
     //sending verification email, todo: to be implemented @ppc
     try {
-            await sendEmail(newUser.email, newUser.name, token, "verify")
-        } catch (error) {
-            console.error("Error sending verification email", error);
-        }
+      await sendEmail(newUser.email, newUser.name, token, "verify");
+    } catch (error) {
+      console.error("Error sending verification email", error);
+    }
   } catch (error) {
     console.log(error); // for debugging
     res.status(500).send({ success: false, message: "Internal Server Error" }); // for production
@@ -189,18 +187,17 @@ export const forgotPassword = async (req, res, next) => {
       const URL = process.env.FRONTEND + "/resetpassword/" + reset_pw_token;
       await sendEmail(user.email, user.username, URL, "forgotPW");
       // console.log("Sent email" + user.email + " " + user.username + " " + URL);
-     } catch (error) {
+    } catch (error) {
       console.error("Error in forgotPassword sending email", error.message);
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
     }
-
   } catch (error) {
-        console.error("error in forgotPassword", error.message);
-        res
-        .status(500)
-        .json({ success: false, message: "Oops! something went wrong" });
+    console.error("error in forgotPassword", error.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Oops! something went wrong" });
   }
 };
 

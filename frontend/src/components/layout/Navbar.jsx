@@ -7,7 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import PeopleIcon from "@mui/icons-material/People";
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import SearchBar from "./SearchBar";
 
 const Navbar = () => {
@@ -81,35 +81,29 @@ const Navbar = () => {
                 className="text-white hover:text-blue-500"
               />
             </Link>
-            {
-              authUser?.isAdmin && (
-                <Link
-                  to={`/admin`}
-                  title="Adminpage"
-                >
-                  <AdminPanelSettingsIcon
-                    fontSize="large"
-                    className="text-white hover:text-blue-500"
-                  />
-                </Link>
-              )
-            }
-
+            {authUser?.isAdmin && (
+              <Link to={`/admin`} title="Adminpage">
+                <AdminPanelSettingsIcon
+                  fontSize="large"
+                  className="text-white hover:text-blue-500"
+                />
+              </Link>
+            )}
           </div>
           <div className="flex space-x-4">
             <button
-              className="col-start-10 justify-self-end flex items-center space-x-1 text-sm text-gray-000 hover:text-blue-500"
+              className="col-start-10 justify-self-end flex items-center space-x-1 text-sm text-white hover:text-blue-500"
               title="Bye~"
               onClick={() => logout()}
             >
               <LogOut size={20} />
-              <span className="hidden md:inline">Logout</span>
+              <span className="md:inline">Logout</span>
             </button>
           </div>
         </>
       ) : (
         <>
-          <Link to="/login" className="btn btn-ghost">
+          <Link to="/login" className="btn btn-primary">
             Sign In
           </Link>
           <Link to="/signup" className="btn btn-primary">
