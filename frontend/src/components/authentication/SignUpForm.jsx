@@ -11,41 +11,47 @@ const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [dob, setDob] = useState("");
 
-    const {mutate:signupMutation, isLoading} = useMutation({
-        mutationFn: async(data) => {
-            console.log(data);
-            const res = await axiosInstance.post("auth/signup", data);
-            return res.data;
-        },
-        onSuccess:() => {
-            toast.success("A verification email has been sent. Please check your inbox to verify your email.", {
-                autoClose: 10000
-              });
-        },
-        onError:(err) => {
-            toast.error("Something went wrong :\n" + err.response.data.message);
-        },
-    })
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if(password.length < 8){
-            toast.error("password must be at least 8 characters");
-        }
-        else if(!(/[A-Z]/.test(password))){
-            toast.error("there must be at least one uppercase letter");
-        }
-        else if(!(/[a-z]/.test(password))){
-            toast.error("there must be at least one lowercase letter");
-        }
-        else if(!(/[0-9]/.test(password))){
-            toast.error("there must be at least one number");
-        }
-        signupMutation({username , email, password, dob, gender});
-    }
-    signupMutation({ username, email, password, dob, gender });
+  const { mutate: signupMutation, isLoading } = useMutation({
+    mutationFn: async (data) => {
+      const res = await axiosInstance.post("auth/signup", data);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success("A verification email has been sent. Please check your inbox to verify your email.", {
+        autoClose: 10000
+      });
+    },
+    onError: (err) => {
+      toast.error("Something went wrong:\n" + err.response?.data?.message);
+    },
+  });
 
-    return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+    if (!/[A-Z]/.test(password)) {
+      toast.error("There must be at least one uppercase letter");
+      return;
+    }
+    if (!/[a-z]/.test(password)) {
+      toast.error("There must be at least one lowercase letter");
+      return;
+    }
+    if (!/[0-9]/.test(password)) {
+      toast.error("There must be at least one number");
+      return;
+    }
+
+    // Only call mutation if validations pass
+    signupMutation({ username, email, password, dob, gender });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Username"
@@ -100,7 +106,7 @@ const SignUpForm = () => {
             )}
           </button>
         </form>
-      );
-  };
+  );
+};
 
 export default SignUpForm;
