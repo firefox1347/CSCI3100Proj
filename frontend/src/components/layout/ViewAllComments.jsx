@@ -25,6 +25,8 @@ const ViewAllComments = ({ open, onClose, postid }) => {
   const [replyingTo, setReplyingTo] = useState(null);
   const [commentReportOpen, setCommentReportOpen] = useState(false);
   const [subCommentReportOpen, setSubCommentReportOpen] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [selectedSubCommentId, setSelectedSubCommentId] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -291,15 +293,14 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                   <IconButton
                     size="small"
                     sx={{ marginLeft: "auto" }}
-                    onClick={() => setCommentReportOpen(true)}
+                    onClick={() => {
+                      setCommentReportOpen(true);
+                      setSelectedCommentId(comment._id);
+                    }}
                   >
                     <OutlinedFlagIcon />
                   </IconButton>
-                  <ReportCommentCard
-                    open={commentReportOpen}
-                    onClose={() => setCommentReportOpen(false)}
-                    commentid={comment._id}
-                  />
+                  
 
                 </Box>
 
@@ -317,7 +318,7 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                     >
                       <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                         {sub.author?.username || "Unknown User"}
-                        {console.log("sub_author = ", sub.author)}
+                        {/* {console.log("sub_author = ", sub.author)} */}
                       </Typography>
                       <Typography variant="body2">{sub.content}</Typography>
                       <Box
@@ -349,16 +350,15 @@ const ViewAllComments = ({ open, onClose, postid }) => {
                         <IconButton
                           size="small"
                           sx={{ marginLeft: "auto" }}
-                          onClick={() => setSubCommentReportOpen(true)}
+                          onClick={() => {
+                            setSubCommentReportOpen(true);
+                            setSelectedCommentId(comment._id);
+                            setSelectedSubCommentId(sub._id);
+                          }}
                         >
                           <OutlinedFlagIcon />
                         </IconButton>
-                        <ReportSubCommentCard
-                          open={subCommentReportOpen}
-                          onClose={() => setSubCommentReportOpen(false)}
-                          commentid={comment._id}
-                          subcommentid={sub._id}
-                        />
+                        
                       </Box>
                     </Box>
                   ))}
@@ -366,6 +366,17 @@ const ViewAllComments = ({ open, onClose, postid }) => {
               <Divider sx={{ mt: 2 }} />
             </Box>
           ))}
+          <ReportCommentCard
+                    open={commentReportOpen}
+                    onClose={() => setCommentReportOpen(false)}
+                    commentid={selectedCommentId}
+                  />
+          <ReportSubCommentCard
+                          open={subCommentReportOpen}
+                          onClose={() => setSubCommentReportOpen(false)}
+                          commentid={selectedCommentId}
+                          subcommentid={selectedSubCommentId}
+                        />
         </Box>
 
         {/* Comment Input */}

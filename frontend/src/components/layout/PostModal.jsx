@@ -74,6 +74,18 @@ const PostModal = ({ postId, onClose }) => {
     }
   });
 
+  const { mutate: deletePost } = useMutation({
+    mutationFn: () => axiosInstance.delete(`/posts/post/${postId}`),
+    onSuccess: () => {
+      toast.success("Post deleted successfully");
+      queryClient.invalidateQueries(["posts"]); // Invalidate relevant queries
+      onClose(); // Close the modal
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to delete post");
+    }
+  });
+
   const handleLike = () => {
     toggleLike();
   };
@@ -273,9 +285,17 @@ const PostModal = ({ postId, onClose }) => {
                   Cancel
                 </Button>
               )}
-              <Grid2 size={8} class="mt-1">
-                <DeleteForeverSharpIcon fontSize='large'/>
-              </Grid2>
+                <Grid2 size={8} className="mt-1">
+                  {currentUser?._id === post.author?._id && (
+                    <IconButton 
+                      onClick={() => deletePost()}
+                      aria-label="Delete post"
+                      color="error"
+                    >
+                      <DeleteForeverSharpIcon fontSize="large" />
+                    </IconButton>
+                  )}
+                </Grid2>
             </div>
           </div>
         </div>

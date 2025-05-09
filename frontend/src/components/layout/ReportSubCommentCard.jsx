@@ -41,6 +41,7 @@ const ReportSubCommentCard = ({ open, onClose, commentid, subcommentid }) => {
 
       if (response.data.success) {
         setSuccess(true);
+        toast.success("Reported successfully");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Report failed");
@@ -48,7 +49,7 @@ const ReportSubCommentCard = ({ open, onClose, commentid, subcommentid }) => {
       setIsSubmitting(false);
     }
   };
-
+  // console.log("Rendering ReportSubCommentCard for subcomment:", subcommentid);
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -74,12 +75,24 @@ const ReportSubCommentCard = ({ open, onClose, commentid, subcommentid }) => {
         className="space-y-6"
       >
         <div>
-          <label
-            htmlFor="reason"
-            className="block text-sm font-medium text-gray-700"
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
           >
-            Report Reason
-          </label>
+            <label
+              htmlFor="reason"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Report Reason
+            </label>
+            <IconButton onClick={onClose} size="small">
+              <CloseIcon />
+            </IconButton>
+          </Box>
           <div className="mt-1">
             <input
               id="reason"
