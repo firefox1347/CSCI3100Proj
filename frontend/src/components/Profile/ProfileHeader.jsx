@@ -58,6 +58,15 @@ const ProfileHeader = (userProfile) => {
     },
   });
 
+  const { data: userPosts } = useQuery({
+    queryKey: ["userPostsCount", targetId],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/posts/userposts/${targetId}`);
+      return res.data;
+    },
+    enabled: !!targetId,
+  });
+
   const isFollowing = followStatus?.isFollowing;
   const followersList = followStatus?.followersList;
   const followingList = followStatus?.followingList;
@@ -148,7 +157,7 @@ const ProfileHeader = (userProfile) => {
 
             <div className="flex items-start space-between mt-4 w-full">
               <div className="text-center font-bold mr-6 mb-3 text-[1.1vw]">
-                0 Post
+              {userPosts?.posts?.length || 0} Post{userPosts?.posts?.length !== 1 ? "s" : ""}
               </div>
               <div className="text-center font-bold mx-6 mb-3 text-[1.1vw]"
               onClick={handleFollowersClick}>
