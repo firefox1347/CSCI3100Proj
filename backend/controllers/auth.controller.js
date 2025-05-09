@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Profile from "../models/profile.model.js";
+import UnverifiedUser from "../models/unverifieduser.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -10,8 +11,9 @@ import sendEmail from "../utils/emailSender.js";
 
 export const signup = async (req, res, next) => {
   try {
-    //validations
     const { password, dob, gender, email, username } = req.body;
+    
+    // Check required fields
     if (!password || !email || !username) {
       return res.status(400).json({
         success: false,
@@ -19,84 +21,98 @@ export const signup = async (req, res, next) => {
       });
     }
 
+    // Validate gender
     if (!genderCheck(gender)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "gender is out of enum value" });
-    }
-    const existingEmail = await User.findOne({ email });
-    const existingusername = await User.findOne({ username });
-    if (existingEmail)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email already exists" });
-    if (existingusername)
-      return res
-        .status(400)
-        .json({ success: false, message: "username already exists" });
-    if (!passwordCheck(password)) {
-      return res.status(400).json({
-        success: false,
-        message: "Not all criteria are met for password",
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid gender value" 
       });
     }
 
-    //hash password
+    // Check existing verified users
+    const [existingEmail, existingUsername] = await Promise.all([
+      User.findOne({ email }),
+      User.findOne({ username })
+    ]);
+
+    if (existingEmail || existingUsername) {
+      return res.status(400).json({
+        success: false,
+        message: "Email or username already registered"
+      });
+    }
+
+    // Validate password
+    if (!passwordCheck(password)) {
+      return res.status(400).json({
+        success: false,
+        message: "Password does not meet security requirements"
+      });
+    }
+
+    // Check for existing unverified users
+    const existingUnverified = await UnverifiedUser.findOne({
+      $or: [{ email }, { username }]
+    });
+
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const verification_token = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
 
-    //generate user and store to db
-    const newUser = new User({
+    if (existingUnverified) {
+      // Handle matching email/username combination
+      if (existingUnverified.email === email && existingUnverified.username === username) {
+        existingUnverified.password = hashedPassword;
+        existingUnverified.verification_token = verificationToken;
+        existingUnverified.verification_token_expires_at = Date.now() + 3600000;
+        await existingUnverified.save();
+        await sendEmail(email, username, verificationToken, "verify");
+        // console.log(`Verification URL: ${process.env.FRONTEND}/verify-email?token=${verificationToken}`);
+        return res.status(200).json({
+          success: true,
+          message: "Verification email resent. Check your inbox."
+        });
+      }
+
+      // Handle conflicts
+      const conflictMessage = existingUnverified.email === email 
+        ? "Email already exists in pending verification" 
+        : "Username already exists in pending verification";
+      
+      return res.status(409).json({
+        success: false,
+        message: conflictMessage
+      });
+    }
+
+    // Create new unverified user
+    const newUnverifiedUser = new UnverifiedUser({
       password: hashedPassword,
       dob,
       gender,
       email,
       username,
-      verification_token,
-      verification_token_expires_at: Date.now() + 60 * 60 * 1000,
-    });
-    await newUser.save();
-
-    //generate profile for created user
-    const newProfile = new Profile({
-      username,
-      bio: "",
-      dob,
-      gender,
-    });
-    await newProfile.save();
-
-    //create token and send to client
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "3d",
+      verification_token: verificationToken,
+      verification_token_expires_at: Date.now() + 3600000
     });
 
-    //for debugging
-    //res.status(200).json({message: "ok", token: token, password: hashedPassword, verification_token:verification_token});
-
-    res.cookie("bbtoken", token, {
-      httpOnly: true,
-      maxAge: 3 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
+    await newUnverifiedUser.save();
+    await sendEmail(email, username, verificationToken, "verify");
+    // console.log(`Verification URL: ${process.env.FRONTEND}/verify-email?token=${verificationToken}`);
+    return res.status(201).json({
+      success: true,
+      message: "Verification email sent. Please check your email to complete registration."
     });
 
-    res.status(201).json({ success: true, message: "Register Sucessfully" });
-
-    //sending verification email, todo: to be implemented @ppc
-    try {
-      await sendEmail(newUser.email, newUser.name, token, "verify");
-    } catch (error) {
-      console.error("Error sending verification email", error);
-    }
   } catch (error) {
-    console.log(error); // for debugging
-    res.status(500).send({ success: false, message: "Internal Server Error" }); // for production
+    console.error("Signup error:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Internal server error" 
+    });
   }
 };
+
 export const login = async (req, res, next) => {
   try {
     const { username_or_email, password } = req.body;
@@ -270,5 +286,74 @@ export const resetPassword = async (req, res, next) => {
     res
       .status(500)
       .json({ success: false, message: "Oops! something went wrong" });
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    const unverifiedUser = await UnverifiedUser.findOne({
+      verification_token: token,
+      verification_token_expires_at: { $gt: Date.now() }
+    });
+
+    if (!unverifiedUser) {
+      return res.status(400).json({ success: false, message: "Invalid or expired verification link" });
+    }
+
+    const existingUser = await User.findOne({
+      $or: [
+        { email: unverifiedUser.email },
+        { username: unverifiedUser.username }
+      ]
+    });
+
+    const existingProfile = await Profile.findOne({ 
+      username: unverifiedUser.username 
+    });
+
+    if (existingUser || existingProfile) {
+      await UnverifiedUser.deleteOne({ _id: unverifiedUser._id });
+
+      if (existingProfile) {
+        await Profile.deleteOne({ _id: existingProfile._id });
+      }
+    
+      return res.status(409).json({
+        success: false,
+        message: "Account already exists"
+      });
+    }
+
+    const newUser = await User.create({
+      ...unverifiedUser.toObject(),
+      verified: true
+    });
+
+    const newProfile = await Profile.create({
+      username: unverifiedUser.username,
+      bio: "",
+      dob: unverifiedUser.dob,
+      gender: unverifiedUser.gender
+    });
+
+    await UnverifiedUser.deleteOne({ _id: unverifiedUser._id });
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully!"
+    });
+
+  } catch (error) {
+    console.error("error:", {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error during verification"
+    });
   }
 };

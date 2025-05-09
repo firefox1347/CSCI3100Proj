@@ -27,12 +27,13 @@ export const sendEmail = async (email, name, token, type)=> {
   switch (type)
   {
     case 'verify':
+      const verify_URL = `${process.env.FRONTEND}/verify-email?token=${token}`;
       mg.messages.create(DOMAIN, {
         from: `BlueBird Team <noreply@${DOMAIN}>`,
         to: [email],
         subject: "Verify Your Email",
-        text: `Dear ${name},\n\nTo verify your email and complete your BlueBird account registration, type the token below into our webpage.\n\n${token}\n\nKind regards,\nBlueBird Team`,
-        html: `Dear ${name},<br><br>To verify your email and complete your BlueBird account registration, type the token below into our webpage.<br><h2>${token}</h2><br>Kind regards,<br>BlueBird Team`
+        text: `Dear ${name},\n\nTo verify your email and complete your BlueBird account registration, type the token below into our webpage.\n\n${verify_URL}\n\nKind regards,\nBlueBird Team`,
+        html: `Dear ${name},<br><br>To verify your email and complete your BlueBird account registration, type the token below into our webpage.<br><h2><a href="${verify_URL}" target="_blank">Verify</a></h2><br>Kind regards,<br>BlueBird Team`
       })
       .then(msg => {
         console.log('Email sent. Message ID:', msg.id);
