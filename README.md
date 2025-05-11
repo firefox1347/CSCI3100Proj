@@ -1,7 +1,10 @@
 # CSCI3100Proj
+url to git hub: https://github.com/firefox1347/CSCI3100Proj
+Branch: we are adapting a feature branch approach here where the branch name is the feature we are implementing in that branch
+
+
 
 after git clone do the following to start the application:
-
 
 1. npm install
 2. set up the .env file correctly in the outest folder (it is uploaded in group)
