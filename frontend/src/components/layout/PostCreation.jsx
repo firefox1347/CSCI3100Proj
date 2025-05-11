@@ -67,13 +67,13 @@ const PostCreation = () => {
 
   const handlePostCreate = async () => {
     if (!input.trim() && images.length === 0) {
-      setErrorMessage("Please write something or upload images");
+      setErrorMessage("Please write something or upload a image");
       return;
     }
 
     if (images.length === 0) {
       // Require at least one image
-      setErrorMessage("You must upload at least one image to post");
+      setErrorMessage("You must upload a image to post");
       return;
     }
 
