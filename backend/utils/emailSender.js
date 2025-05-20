@@ -8,8 +8,8 @@ import emailCheck from './emailCheck.js';
 // type: verify, forgetPW, resetSuccess
 export const sendEmail = async (email, name, token, type)=> {
   // Configurations
-  const DOMAIN = 'mail.papachk.top';
-  const API_KEY = '5dc9c943c8275d6a8d7ddd19606164cb-e298dd8e-531c09cf';
+  const DOMAIN = 'Your Domain';
+  const API_KEY = 'Your API KEY';
 
   // Validate email
   if (!emailCheck(email)){
